@@ -1,17 +1,28 @@
 # Fishy Goes Fishing 🎣🐟
 
-A reverse-fishing meme game: **you're the fish**, and you catch the humans.
+An **open-world** reverse-fishing meme game: you're a fish who grew **human legs**, roaming a big world and catching humans in different places.
 
-Swimmers cross the surface — cast your net up, haul them in, and score before the 75-second timer runs out. Golden swimmers are worth bonus points, crabs pinch and snap your line, and dolphins give you a bonus when they pass.
+## The world
+
+A 2,600 × 1,800 world with a camera that follows you, and four places to hunt:
+
+- **Sunny Beach**
+- **Wooden Pier**
+- **Splash Pool**
+- **River Delta** — golden humans hide by the river
+
+## .io-style interface
+
+Like a 3D fishing .io game: a live **leaderboard** with rival players, a **minimap** showing the whole world and every human, a current-place banner, score/combos, and depth-sorted pseudo-3D rendering. You have 90 seconds per round.
 
 ## Play it
 
-Open `index.html` in any browser, or host this repo with GitHub Pages (Settings → Pages → Deploy from branch → `main`) and play from the link.
+**Live:** https://taoshif007-cpu.github.io/fishy-goes-fishing/
 
-- **Android / iPhone:** drag to move, tap **CAST NET**
-- **PC:** mouse or arrow keys to move, **Space** to cast
+Or open `index.html` in any browser. Tap **Click to Start** first — browsers block sound until the first tap/click.
 
-Tap **Click to Start** first — browsers block sound until the first tap/click.
+- **Android / iPhone:** on-screen joystick to walk, tap **CAST NET**
+- **PC:** WASD / arrow keys to walk, **Space** to cast, or drag with the mouse
 
 ## Meme sound effects — all generated in code
 
