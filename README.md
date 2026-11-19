@@ -69,7 +69,9 @@ and drop your file in an `assets/` folder.
 - **Fishermen** with rods and hooks wander the maps. They follow Fishy when he
   comes near, and inside their red hook-range circle they cast a hook at him:
   a hit costs **20 health**. Fishy has a health bar — dolphins heal +10, and
-  at 0 health the round ends early. Net a fisherman to tangle him up.
+  at 0 health the round ends early. Net a fisherman to tangle him up (+150).
+  Chases are capped: a fisherman gives up after ~4.5 seconds or if dragged too
+  far from home, and cannot re-aggro for a few seconds.
 - **Escaped humans dance and mock**: any human who escapes stops for a
   2-second dance with a mocking bubble ("Nice try, fishy!", "Too slow!",
   "Nyah nyah!") and a mocking laugh, then runs off at triple speed.
