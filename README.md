@@ -4,12 +4,15 @@ An **open-world, character-POV** reverse-fishing meme game: you're a fish who gr
 
 ## The world
 
-A 2,600 × 1,800 world with a camera that follows you, and four places to hunt:
+A big open world (5,200 wide) with a camera that rides behind Fishy, and **eight places** to hunt:
 
-- **Sunny Beach**
-- **Wooden Pier**
-- **Splash Pool**
-- **River Delta** — golden humans hide by the river
+- **Sunny Beach** · **Wooden Pier** · **Splash Pool** · **River Delta**
+- **Jungle Trail** — tall grass, ferns, palms and rocks, like a jungle clearing
+- **Waterfall Cove** — rocks, a waterfall and mist
+- **Fishing Village** — huts, market stalls, fences and lamps
+- **Coral Lagoon** — bright shallow water, coral, shells and boats
+
+**Where the maps separate:** every boundary is detailed — wooden log gates and bridges at the crossings, signposts with the place name, torches, fence lines, stepping stones, border rocks and bushes, and a blended dirt-track strip in the ground. The place banner fires as you cross.
 
 ## .io-style interface
 
@@ -30,8 +33,16 @@ Tap the 🎯 **Missions** button to see live progress. Mission progress tracks a
 
 - **Golden Hunter** — hunt 20 ★ Special golden humans → unlock the **Golden Fishy** avatar (crown + glow)
 - **Human Hunter** — 50 total catches → unlock **Shark Fishy**
-- **World Explorer** — visit all 4 places → +1,000 pts
+- **World Explorer** — visit all 8 places → +1,000 pts
 - **Combo King** — catch ×5 in one net → unlock **Rainbow Fishy**
+- **Beach Hunter** — catch 25 humans at Sunny Beach → unlock **Explorer Fishy** (safari hat)
+- **Pier Master** — catch 25 at Wooden Pier → unlock **Pirate Fishy** (pirate hat + eye patch)
+- **Pool Party** — catch 25 at Splash Pool → unlock **Party Fishy** (party hat + sunglasses)
+- **Delta Hunter** — catch 25 at River Delta → unlock **Jungle Fishy** (leaf camouflage)
+- **Airhorn King** — trigger the airhorn 5 times → unlock **King Fishy** (big crown + cape)
+- **Dolphin Friend** — meet the dolphin 5 times → unlock **Angel Fishy** (halo + wings)
+- **Crab Dodger** — finish a round with no crab pinch → unlock **Ninja Fishy** (headband)
+- **High Scorer** — score 5,000 in one round → unlock **Robot Fishy** (metal body + antenna)
 
 Special humans are gold, labelled ★ SPECIAL, and shown as gold dots on the minimap. Unlocking an avatar auto-equips it with a fanfare; switch avatars any time from the Missions panel or the start screen.
 

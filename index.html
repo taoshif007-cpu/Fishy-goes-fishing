@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <meta name="color-scheme" content="dark"/>
 <link rel="icon" href="data:,"/>
-<title>Fishy Goes Fishing — POV Open World + Missions</title>
+<title>Fishy Goes Fishing — 3D Open World + Missions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
 <style>
@@ -101,14 +101,14 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 <div id="stage">
 <canvas id="game"></canvas>
 <div id="crosshair" aria-hidden="true"><i></i></div>
-<div id="povLabel">🎥 POV — YOU ARE FISHY · Whole avatar on screen</div>
+<div id="povLabel">🎮 NORMAL 3D · Third-person — whole Fishy on screen</div>
 <div id="zoneBanner"><div class="zname" id="zoneName">🏖️ Sunny Beach</div><div class="zsub" id="zoneSub">Swimmers everywhere — easy catches</div></div>
 <div id="missionTracker"><span><span class="star">★ SPECIAL</span> <span id="trackerSpecial">0 / 20</span></span><span id="trackerNext">→ Golden Fishy</span></div>
 <div id="missionPanel" hidden>
 <div class="mission-card">
 <div class="unlock-banner" id="unlockBanner" hidden></div>
 <h2>🎯 Missions <span>&amp; Avatars</span></h2>
-<p class="sub">Missions carry over between rounds while you play. Finish one to unlock a new Fishy avatar — tap an unlocked avatar to wear it right away. Special humans are the glowing ★ GOLDEN ones — they love the River Delta.</p>
+<p class="sub">Missions carry over between rounds while you play. Finish one to unlock a new Fishy avatar — tap an unlocked avatar to wear it right away. Special humans are the glowing ★ GOLDEN ones — they love the River Delta. Each place has its own hunter mission too!</p>
 <div id="missionList"></div>
 <h2 style="font-size:1.15rem;margin-top:14px">Choose your <span>Fishy</span></h2>
 <div class="avatar-grid" id="avatarGrid"></div>
@@ -125,14 +125,14 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 
 <div class="overlay" id="startScreen">
 <h1>Fishy Goes <span class="hl">Fishing</span></h1>
-<p><strong style="color:#fff">Now in CHARACTER POV!</strong> The camera rides right behind Fishy, like a 3D .io game — you see ALL of him the whole time: fish body, avatar skin, shorts and his human legs running. The world stretches out ahead of him in perspective, and he throws his net forward into it.</p>
+<p><strong style="color:#fff">Now in NORMAL 3D MODE!</strong> A proper third-person view like a console adventure game: the camera rides behind Fishy in the foreground — you see ALL of him the whole time (fish body, avatar outfit, shorts, human legs) — looking across a rich, sunlit 3D world of trees, grass, rocks, huts and gates, with humans waiting in the distance. He throws his net forward into the scene.</p>
 <div class="howto">
 <span><b>Look / turn</b> — drag on the screen / mouse, or <kbd>←</kbd><kbd>→</kbd> arrow keys — the camera swings behind Fishy</span>
 <span><b>Walk / run</b> — <kbd>W</kbd> forward, <kbd>S</kbd> back, <kbd>A</kbd>/<kbd>D</kbd> step sideways · Phone: left joystick walks, drag right side to look</span>
 <span><b>Cast net</b> — <kbd>Space</kbd>, double-tap, or the big CAST NET button — line a human up in the gold aim ring ahead of Fishy and get close first!</span>
-<span><b>Explore</b> — Sunny Beach · Wooden Pier · Splash Pool · River Delta — walk there in POV, each place looks &amp; feels different</span>
+<span><b>Explore 8 places</b> — Sunny Beach · Wooden Pier · Jungle Trail · Waterfall Cove · Splash Pool · River Delta · Coral Lagoon · Fishing Village. Places meet at <b>log gates, bridges and dirt tracks</b> with signposts &amp; torches — walk through an entrance and the place banner fires</span>
 <span><b>Combo</b> — net 3+ humans in one cast for the airhorn bonus</span>
-<span><b>🎯 Missions</b> — hunt <b>20 ★ Special (golden) humans</b> to unlock the <b>Golden Fishy</b> avatar, plus 3 more missions &amp; avatars — tap 🎯 Missions anytime</span>
+<span><b>🎯 Missions</b> — <b>12 missions</b> now! Hunt <b>20 ★ Special humans</b> for Golden Fishy, master each place (Beach / Pier / Pool / Delta) for Explorer, Pirate, Party &amp; Jungle Fishy, plus Airhorn King, Dolphin Friend, Crab Dodger, High Scorer and more — <b>11 avatars</b> to unlock. Tap 🎯 Missions anytime</span>
 <span><b>Beware</b> — crabs pinch, heavy nets snap, humans wriggle free and dance away</span>
 </div>
 <div style="width:100%;max-width:520px;text-align:left"><div style="font-family:Fredoka,sans-serif;font-weight:700;margin-bottom:6px">Your Fishy — pick an unlocked avatar:</div><div class="avatar-grid" id="avatarGridStart"></div></div>
@@ -147,7 +147,7 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 <div class="stat"><span class="label">Final score</span><span class="value" id="finalScore">0</span></div>
 <div class="stat"><span class="label">Humans caught</span><span class="value" id="finalCaught">0</span></div>
 <div class="stat"><span class="label">Best combo</span><span class="value" id="finalCombo">×0</span></div>
-<div class="stat"><span class="label">Places visited</span><span class="value" id="finalPlaces">1 / 4</span></div>
+<div class="stat"><span class="label">Places visited</span><span class="value" id="finalPlaces">1 / 8</span></div>
 <div class="stat"><span class="label">★ Special (all rounds)</span><span class="value" id="finalSpecial">0 / 20</span></div>
 </div>
 <p id="overMissions" style="font-size:.9rem"></p>
@@ -156,7 +156,7 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 </div>
 </div>
 
-<footer id="controls"><div id="hint"><b>Character POV:</b> camera behind Fishy — the whole avatar stays on screen while the world rolls ahead in perspective. Drag to look, walk up to humans and line them up in the gold aim ring. Hunt ★ Special golden humans (best in the River) — 20 unlocks Golden Fishy! <b>PC:</b> WASD walk · ←/→ turn · Space cast &nbsp;•&nbsp; <b>Phone:</b> joystick + drag to look + CAST NET</div></footer>
+<footer id="controls"><div id="hint"><b>Normal 3D third-person:</b> camera behind Fishy — the whole avatar stays in the foreground while the sunlit world rolls ahead in perspective. Drag to look, walk up to humans and line them up in the gold aim ring. 12 missions, 11 avatars — hunt ★ Special golden humans (best in the River)! <b>PC:</b> WASD walk · ←/→ turn · Space cast &nbsp;•&nbsp; <b>Phone:</b> joystick + drag to look + CAST NET</div></footer>
 </div>
 
 <script>
@@ -211,12 +211,16 @@ const sounds={
 };
 
 /* ================= WORLD ================= */
-const WORLD_W=2600, WORLD_H=1800, GAME_LEN=90;
+const WORLD_W=5200, WORLD_H=1800, GAME_LEN=90;
 const ZONES=[
- {id:"beach", name:"Sunny Beach", emoji:"🏖️", sub:"Swimmers & sunbathers — easy catches", x:0,y:0,w:1300,h:900, ground:"#e8cf8f", water:"#1b9cd6"},
- {id:"pier", name:"Wooden Pier", emoji:"🎣", sub:"Anglers on the pier — they fight back more", x:1300,y:0,w:1300,h:900, ground:"#9a6b3f", water:"#0f7fb8"},
- {id:"pool", name:"Splash Pool", emoji:"🏊", sub:"Pool party! Lots of humans, close together", x:0,y:900,w:1300,h:900, ground:"#7ed6e8", water:"#29b6f6"},
- {id:"river", name:"River Delta", emoji:"🌿", sub:"Picnics & campers by the river — golden humans hide here", x:1300,y:900,w:1300,h:900, ground:"#6fbf5e", water:"#2a9d8f"}
+ {id:"beach", name:"Sunny Beach", emoji:"🏖️", sub:"Swimmers & sunbathers — easy catches", x:0,y:0,w:1300,h:900, ground:"#e8cf8f", water:"#1b9cd6", kinds:["Swimmer","Sunbather"]},
+ {id:"pier", name:"Wooden Pier", emoji:"🎣", sub:"Anglers on the pier — they fight back more", x:1300,y:0,w:1300,h:900, ground:"#9a6b3f", water:"#0f7fb8", kinds:["Angler","Fisher"]},
+ {id:"jungle", name:"Jungle Trail", emoji:"🌴", sub:"Dense jungle — explorers push through the tall grass", x:2600,y:0,w:1300,h:900, ground:"#4e9a3f", water:"#3f7d4e", kinds:["Explorer","Hiker"]},
+ {id:"falls", name:"Waterfall Cove", emoji:"💦", sub:"Mist, rocks and a roaring waterfall — swimmers cool off here", x:3900,y:0,w:1300,h:900, ground:"#8fa3a8", water:"#57c7e3", kinds:["Swimmer","Camper"]},
+ {id:"pool", name:"Splash Pool", emoji:"🏊", sub:"Pool party! Lots of humans, close together", x:0,y:900,w:1300,h:900, ground:"#7ed6e8", water:"#29b6f6", kinds:["Pool partier","Swimmer"]},
+ {id:"river", name:"River Delta", emoji:"🌿", sub:"Picnics & campers by the river — golden humans hide here", x:1300,y:900,w:1300,h:900, ground:"#6fbf5e", water:"#2a9d8f", kinds:["Picnicker","Camper"]},
+ {id:"lagoon", name:"Coral Lagoon", emoji:"🐚", sub:"Bright shallow water, coral and boats — snorkelers everywhere", x:2600,y:900,w:1300,h:900, ground:"#f2d8a0", water:"#2fd4c4", kinds:["Snorkeler","Sailor"]},
+ {id:"village", name:"Fishing Village", emoji:"🛖", sub:"Huts, market stalls and lamps — the whole village is out", x:3900,y:900,w:1300,h:900, ground:"#c9a15f", water:"#7a9e7e", kinds:["Villager","Trader"]}
 ];
 function zoneAt(x,y){return ZONES.find(z=>x>=z.x&&x<z.x+z.w&&y>=z.y&&y<z.y+z.h)||ZONES[0];}
 
@@ -226,7 +230,7 @@ const hudScore=document.getElementById("hudScore"),hudTime=document.getElementBy
 const toastEl=document.getElementById("toast"), castBtn=document.getElementById("castBtn2");
 let W=0,H=0,time=0;
 const cam={x:0,y:0};
-const game={score:0,caught:0,bestCombo:0,timeLeft:GAME_LEN,lastVoiceAt:-9,lastTromboneAt:-9,visited:new Set(["beach"]),botT:0};
+const game={score:0,caught:0,bestCombo:0,timeLeft:GAME_LEN,lastVoiceAt:-9,lastTromboneAt:-9,visited:new Set(["beach"]),botT:0,pinched:false};
 const bots=[{name:"SharkySam",score:120},{name:"NetNina",score:80},{name:"SplashKing",score:40}];
 const fish={x:400,y:450,vx:0,vy:0,dir:1,walk:0,moving:false,legSkin:"#f2c79b",angle:0,bob:0,lookDrag:0};
 /* ================= MISSIONS & AVATARS =================
@@ -234,17 +238,34 @@ const fish={x:400,y:450,vx:0,vy:0,dir:1,walk:0,moving:false,legSkin:"#f2c79b",an
    for the whole play session. Special humans = the glowing
    golden ones (h.golden). */
 const AVATARS={
- classic:{name:"Classic Fishy",emoji:"🐠",top:"#ffb03a",bottom:"#f2760a",tail:"#f28c13",shorts:"#2456a6",crown:false,glow:null},
- golden:{name:"Golden Fishy",emoji:"👑",top:"#ffe066",bottom:"#ffb703",tail:"#f5b301",shorts:"#3a2400",crown:true,glow:"rgba(255,210,63,.55)"},
- shark:{name:"Shark Fishy",emoji:"🦈",top:"#cfe8f2",bottom:"#457b9d",tail:"#457b9d",shorts:"#22303c",crown:false,glow:null},
- rainbow:{name:"Rainbow Fishy",emoji:"🌈",top:"#ff6b9d",bottom:"#38bdf8",tail:"#7bed6a",shorts:"#7c3aed",crown:false,glow:"rgba(199,125,255,.5)"}
+ classic:{name:"Classic Fishy",emoji:"🐠",top:"#ffb03a",bottom:"#f2760a",tail:"#f28c13",shorts:"#2456a6",acc:null,glow:null},
+ golden:{name:"Golden Fishy",emoji:"👑",top:"#ffe066",bottom:"#ffb703",tail:"#f5b301",shorts:"#3a2400",acc:"crown",glow:"rgba(255,210,63,.55)"},
+ shark:{name:"Shark Fishy",emoji:"🦈",top:"#cfe8f2",bottom:"#457b9d",tail:"#457b9d",shorts:"#22303c",acc:"fin",glow:null},
+ rainbow:{name:"Rainbow Fishy",emoji:"🌈",top:"#ff6b9d",bottom:"#38bdf8",tail:"#7bed6a",shorts:"#7c3aed",acc:"rainbow",glow:"rgba(199,125,255,.5)"},
+ explorer:{name:"Explorer Fishy",emoji:"🧭",top:"#f4a950",bottom:"#d97b29",tail:"#c96a1e",shorts:"#5b4a2a",acc:"safari",glow:null},
+ pirate:{name:"Pirate Fishy",emoji:"🏴‍☠️",top:"#8d9db6",bottom:"#4a5a75",tail:"#33415c",shorts:"#3a0d0d",acc:"pirate",glow:null},
+ party:{name:"Party Fishy",emoji:"🥳",top:"#ff8fab",bottom:"#fb6f92",tail:"#ff5d8f",shorts:"#590d22",acc:"party",glow:"rgba(255,143,171,.4)"},
+ jungle:{name:"Jungle Fishy",emoji:"🍃",top:"#7bc950",bottom:"#3e8914",tail:"#2f6b0f",shorts:"#274e13",acc:"leaf",glow:null},
+ king:{name:"King Fishy",emoji:"🤴",top:"#ffd23f",bottom:"#e0a100",tail:"#c78f00",shorts:"#6a040f",acc:"kingcrown",glow:"rgba(255,210,63,.5)"},
+ angel:{name:"Angel Fishy",emoji:"😇",top:"#fdfdfd",bottom:"#dbeafe",tail:"#bfdbfe",shorts:"#93c5fd",acc:"angel",glow:"rgba(255,255,255,.55)"},
+ ninja:{name:"Ninja Fishy",emoji:"🥷",top:"#4b5563",bottom:"#1f2937",tail:"#111827",shorts:"#111827",acc:"ninja",glow:null},
+ robot:{name:"Robot Fishy",emoji:"🤖",top:"#d1d5db",bottom:"#6b7280",tail:"#4b5563",shorts:"#374151",acc:"robot",glow:"rgba(147,197,253,.4)"}
 };
-const profile={totalCaught:0,specialCaught:0,bestComboEver:0,placesEver:new Set(["beach"]),unlocked:new Set(["classic"]),currentAvatar:"classic",done:new Set()};
+const profile={totalCaught:0,specialCaught:0,bestComboEver:0,placesEver:new Set(["beach"]),unlocked:new Set(["classic"]),currentAvatar:"classic",done:new Set(),byZone:{},airhorns:0,dolphinMeets:0,cleanRounds:0,bestScore:0};
+ZONES.forEach(z=>profile.byZone[z.id]=0);
 const MISSIONS=[
  {id:"special20",icon:"⭐",title:"Golden Hunter",desc:"Hunt 20 SPECIAL humans — the glowing golden ones. They appear most often in the River Delta.",target:20,get:()=>profile.specialCaught,reward:"golden",rewardText:"Unlocks 👑 Golden Fishy avatar"},
  {id:"total50",icon:"🎣",title:"Human Hunter",desc:"Catch 50 humans in total, across all rounds and all places.",target:50,get:()=>profile.totalCaught,reward:"shark",rewardText:"Unlocks 🦈 Shark Fishy avatar"},
- {id:"explorer4",icon:"🗺️",title:"World Explorer",desc:"Visit all 4 places: Sunny Beach, Wooden Pier, Splash Pool and River Delta.",target:4,get:()=>profile.placesEver.size,reward:null,rewardText:"Reward: +1000 bonus points when completed"},
- {id:"combo5",icon:"📣",title:"Combo King",desc:"Net 5 or more humans in a single cast. Crowded spots like the Splash Pool are your friend.",target:5,get:()=>profile.bestComboEver,reward:"rainbow",rewardText:"Unlocks 🌈 Rainbow Fishy avatar"}
+ {id:"explorerAll",icon:"🗺️",title:"World Explorer",desc:"Visit all 8 places — cross the log gates, bridges and village paths to find them all.",target:8,get:()=>profile.placesEver.size,reward:null,rewardText:"Reward: +1000 bonus points when completed"},
+ {id:"combo5",icon:"📣",title:"Combo King",desc:"Net 5 or more humans in a single cast. Crowded spots like the Splash Pool are your friend.",target:5,get:()=>profile.bestComboEver,reward:"rainbow",rewardText:"Unlocks 🌈 Rainbow Fishy avatar"},
+ {id:"beach25",icon:"🏖️",title:"Beach Hunter",desc:"Catch 25 humans at Sunny Beach.",target:25,get:()=>profile.byZone.beach,reward:"explorer",rewardText:"Unlocks 🧭 Explorer Fishy avatar (safari hat)"},
+ {id:"pier25",icon:"⚓",title:"Pier Master",desc:"Catch 25 humans at the Wooden Pier.",target:25,get:()=>profile.byZone.pier,reward:"pirate",rewardText:"Unlocks 🏴‍☠️ Pirate Fishy avatar (hat + eye patch)"},
+ {id:"pool25",icon:"🎉",title:"Pool Party",desc:"Catch 25 humans at the Splash Pool.",target:25,get:()=>profile.byZone.pool,reward:"party",rewardText:"Unlocks 🥳 Party Fishy avatar (party hat + shades)"},
+ {id:"river25",icon:"🌿",title:"Delta Hunter",desc:"Catch 25 humans at the River Delta.",target:25,get:()=>profile.byZone.river,reward:"jungle",rewardText:"Unlocks 🍃 Jungle Fishy avatar (leaf camouflage)"},
+ {id:"airhorn5",icon:"📯",title:"Airhorn King",desc:"Trigger the airhorn — 3 or more humans in one net — 5 times.",target:5,get:()=>profile.airhorns,reward:"king",rewardText:"Unlocks 🤴 King Fishy avatar (big crown + cape)"},
+ {id:"dolphin5",icon:"🐬",title:"Dolphin Friend",desc:"Meet the dolphin 5 times — swim up close when it leaps by.",target:5,get:()=>profile.dolphinMeets,reward:"angel",rewardText:"Unlocks 😇 Angel Fishy avatar (halo + wings)"},
+ {id:"crabdodge",icon:"🦀",title:"Crab Dodger",desc:"Finish a full round without a single crab pinch.",target:1,get:()=>profile.cleanRounds,reward:"ninja",rewardText:"Unlocks 🥷 Ninja Fishy avatar (headband)"},
+ {id:"score5000",icon:"🏆",title:"High Scorer",desc:"Score 5,000 points in a single round.",target:5000,get:()=>profile.bestScore,reward:"robot",rewardText:"Unlocks 🤖 Robot Fishy avatar (metal + antenna)"}
 ];
 const net={active:false,t:0,x:0,y:0,r:0,caught:[]};
 let humans=[],crabs=[],dolphins=[],popups=[],bubbles=[];
@@ -255,11 +276,11 @@ const KIND=["Swimmer","Sunbather","Angler","Camper","Pool partier","Picnicker"];
 function resize(){const r=stage.getBoundingClientRect();const dpr=Math.min(devicePixelRatio||1,2);W=Math.max(280,r.width);H=Math.max(300,r.height);canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
 addEventListener("resize",resize);addEventListener("orientationchange",()=>setTimeout(resize,60));
 
-function spawnHuman(zone,forceSpecial){zone=zone||pick(ZONES);const golden=forceSpecial?true:(zone.id==="river"?Math.random()<.35:Math.random()<.18);humans.push({x:clamp(zone.x+rand(70,zone.w-70),40,WORLD_W-40),y:clamp(zone.y+rand(80,zone.h-80),50,WORLD_H-40),zone:zone.id,kind:pick(KIND),dir:Math.random()<.5?1:-1,speed:rand(22,52),skin:pick(SKIN),hair:pick(HAIR),suit:pick(SUIT),golden,state:"wander",wiggle:rand(0,9),danceT:0,caughtAt:0,tx:0,ty:0,retarget:0});const h=humans[humans.length-1];h.tx=h.x;h.ty=h.y;}
+function spawnHuman(zone,forceSpecial){zone=zone||pick(ZONES);const golden=forceSpecial?true:(zone.id==="river"?Math.random()<.35:Math.random()<.16);humans.push({x:clamp(zone.x+rand(70,zone.w-70),40,WORLD_W-40),y:clamp(zone.y+rand(80,zone.h-80),50,WORLD_H-40),zone:zone.id,kind:pick(zone.kinds||KIND),dir:Math.random()<.5?1:-1,speed:rand(22,52),skin:pick(SKIN),hair:pick(HAIR),suit:pick(SUIT),golden,state:"wander",wiggle:rand(0,9),danceT:0,caughtAt:0,tx:0,ty:0,retarget:0});const h=humans[humans.length-1];h.tx=h.x;h.ty=h.y;}
 function spawnCrab(){const z=pick(ZONES);crabs.push({x:z.x+rand(60,z.w-60),y:z.y+rand(60,z.h-60),dir:1,speed:rand(18,34),snap:rand(0,9),pinchedAt:-9,tx:0,ty:0,retarget:0});}
 function spawnDolphin(){const z=pick(ZONES);dolphins.push({x:z.x+rand(100,z.w-100),y:z.y+rand(100,z.h-100),dir:Math.random()<.5?1:-1,speed:rand(70,110),phase:rand(0,9),bonused:false,tx:0,ty:0,retarget:0});}
 function spawnAt(x,y,golden){spawnHuman(zoneAt(x,y),golden);const h=humans[humans.length-1];h.x=x;h.y=y;h.tx=x;h.ty=y;}
-function seedWorld(){humans=[];crabs=[];dolphins=[];bubbles=[];ZONES.forEach(z=>{const n=z.id==="pool"?7:5;for(let i=0;i<n;i++)spawnHuman(z);});spawnHuman(ZONES[3],true);spawnHuman(ZONES[3],true);spawnHuman(ZONES[0],true);for(let i=0;i<6;i++)spawnCrab();for(let i=0;i<3;i++)spawnDolphin();for(let i=0;i<40;i++)bubbles.push({x:rand(0,WORLD_W),y:rand(0,WORLD_H),r:rand(1.5,4)});}
+function seedWorld(){humans=[];crabs=[];dolphins=[];bubbles=[];ZONES.forEach(z=>{const n=z.id==="pool"?7:5;for(let i=0;i<n;i++)spawnHuman(z);});spawnHuman(ZONES[5],true);spawnHuman(ZONES[5],true);spawnHuman(ZONES[0],true);spawnHuman(ZONES[2],true);spawnHuman(ZONES[6],true);for(let i=0;i<9;i++)spawnCrab();for(let i=0;i<4;i++)spawnDolphin();for(let i=0;i<70;i++)bubbles.push({x:rand(0,WORLD_W),y:rand(0,WORLD_H),r:rand(1.5,4)});}
 
 let toastTimer=null;function toast(t,k){toastEl.textContent=t;toastEl.className="show"+(k?" "+k:"");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.className="",1500);}
 function popup(x,y,t,c){popups.push({x,y,text:t,color:c||"#fff",t:0});}
@@ -267,7 +288,7 @@ function onCaught(h){if(Math.random()<.5)sounds.boing();else sounds.bonk();if(ti
 function onEscape(h,snapped){if(time-game.lastTromboneAt>2.4){sounds.sadTrombone();game.lastTromboneAt=time;}if(Math.random()<.55)sounds.evilLaugh();if(time-game.lastVoiceAt>.9){sounds.voiceEscape();game.lastVoiceAt=time;}popup(h.x,h.y-32,snapped?"IT SNAPPED!":"WRIGGLED FREE!","#ffb3c1");}
 
 function castNet(){if(!state.playing||net.active)return;net.active=true;net.t=0;net.x=fish.x+Math.cos(fish.angle)*118;net.y=fish.y+Math.sin(fish.angle)*118;net.r=0;net.caught=[];net.throwT=0;}
-function deliverCatch(){const n=net.caught.length;if(!n)return;let pts=0,gold=false,specials=0;net.caught.forEach(h=>{pts+=h.golden?250:100;if(h.golden){gold=true;specials++;}});game.caught+=n;game.bestCombo=Math.max(game.bestCombo,n);profile.totalCaught+=n;profile.specialCaught+=specials;profile.bestComboEver=Math.max(profile.bestComboEver,n);if(n>=3){pts+=(n-2)*75;sounds.airhorn();sounds.kaChing();toast("AIRHORN COMBO ×"+n+"!","gold");}else if(gold||n===2){sounds.kaChing();if(gold)toast("★ SPECIAL HUMAN +250! ("+profile.specialCaught+" / 20)","gold");}game.score+=pts;popup(fish.x+Math.cos(fish.angle)*130,fish.y+Math.sin(fish.angle)*130,"+"+pts,"#ffd23f");humans=humans.filter(h=>h.state!=="caught");net.caught.forEach(()=>spawnHuman());net.caught=[];updateHud();updateLeader();checkMissions();renderMissions();}
+function deliverCatch(){const n=net.caught.length;if(!n)return;let pts=0,gold=false,specials=0;net.caught.forEach(h=>{pts+=h.golden?250:100;if(h.golden){gold=true;specials++;}const hz=zoneAt(h.x,h.y);profile.byZone[hz.id]=(profile.byZone[hz.id]||0)+1;});game.caught+=n;game.bestCombo=Math.max(game.bestCombo,n);profile.totalCaught+=n;profile.specialCaught+=specials;profile.bestComboEver=Math.max(profile.bestComboEver,n);if(n>=3){pts+=(n-2)*75;profile.airhorns++;sounds.airhorn();sounds.kaChing();toast("AIRHORN COMBO ×"+n+"!","gold");}else if(gold||n===2){sounds.kaChing();if(gold)toast("★ SPECIAL HUMAN +250! ("+profile.specialCaught+" / 20)","gold");}game.score+=pts;profile.bestScore=Math.max(profile.bestScore,game.score);popup(fish.x+Math.cos(fish.angle)*130,fish.y+Math.sin(fish.angle)*130,"+"+pts,"#ffd23f");humans=humans.filter(h=>h.state!=="caught");net.caught.forEach(()=>spawnHuman());net.caught=[];updateHud();updateLeader();checkMissions();renderMissions();}
 function checkMissions(){MISSIONS.forEach(m=>{if(profile.done.has(m.id))return;if(m.get()>=m.target){profile.done.add(m.id);let msg="";if(m.reward){profile.unlocked.add(m.reward);profile.currentAvatar=m.reward;msg="🎉 MISSION COMPLETE: "+m.title+"! New avatar unlocked: "+AVATARS[m.reward].emoji+" "+AVATARS[m.reward].name+" — now wearing it!";}else{game.score+=1000;msg="🎉 MISSION COMPLETE: "+m.title+"! +1000 bonus points!";updateHud();}sounds.fanfare();sounds.kaChing();const b=document.getElementById("unlockBanner");b.textContent=msg;b.hidden=false;toast(m.title.toUpperCase()+" COMPLETE! 🎉","gold");}});renderMissions();}
 function renderMissions(){const hudS=document.getElementById("hudSpecial");if(hudS)hudS.textContent=profile.specialCaught+" / 20";const tr=document.getElementById("trackerSpecial");if(tr)tr.textContent=profile.specialCaught+" / 20";const tn=document.getElementById("trackerNext");if(tn)tn.textContent=profile.done.has("special20")?"Golden Fishy unlocked! 👑":"→ Golden Fishy";const list=document.getElementById("missionList");if(list){list.innerHTML=MISSIONS.map(m=>{const cur=Math.min(m.get(),m.target),done=profile.done.has(m.id),pct=Math.round(cur/m.target*100);return `<div class="mission-row ${done?"done":""}"><div class="m-top"><span class="m-title">${m.icon} ${m.title} ${done?"✅":""}</span><span class="m-count">${cur} / ${m.target}</span></div><div class="m-desc">${m.desc}</div><div class="bar"><i style="width:${pct}%"></i></div><div class="m-reward ${done?"unlocked":""}">${done?"✅ "+m.rewardText:m.rewardText}</div></div>`;}).join("");}
  const gridHTML=Object.entries(AVATARS).map(([id,a])=>{const un=profile.unlocked.has(id),eq=profile.currentAvatar===id;const lock=MISSIONS.find(m=>m.reward===id);return `<button type="button" class="avatar-card ${eq?"equipped":""} ${un?"":"locked"}" data-avatar="${id}" ${un?"":"disabled"}><div class="a-emoji">${un?a.emoji:"🔒"}</div><div class="a-name">${a.name}</div><div class="a-state">${eq?"★ WEARING":un?"Tap to wear":(lock?lock.title+" mission":"Locked")}</div></button>`;}).join("");
@@ -305,13 +326,13 @@ function update(dt){time+=dt;popups.forEach(p=>{p.t+=dt;p.y-=30*dt;});popups=pop
  // wander helper
  const wander=e=>{e.retarget-=dt;if(e.retarget<=0){e.tx=clamp(e.x+rand(-220,220),40,WORLD_W-40);e.ty=clamp(e.y+rand(-180,180),50,WORLD_H-40);e.retarget=rand(2,5);}const dx=e.tx-e.x,dy=e.ty-e.y,d=Math.hypot(dx,dy);if(d>6){e.x+=dx/d*e.speed*dt;e.y+=dy/d*e.speed*dt;e.dir=dx>0?1:-1;}};
  humans.forEach(h=>{if(h.state==="wander"||h.state==="escape"){wander(h);if(h.danceT>0)h.danceT-=dt;}});
- crabs.forEach(wander); dolphins.forEach(d=>{wander(d);if(!d.bonused&&dist(d,fish)<70){d.bonused=true;sounds.dolphinChirp();sounds.kaChing();game.score+=150;popup(d.x,d.y-30,"DOLPHIN BONUS +150","#7df9ff");toast("DOLPHIN BONUS +150!","blue");updateHud();setTimeout(()=>d.bonused=false,8000);}});
+ crabs.forEach(wander); dolphins.forEach(d=>{wander(d);if(!d.bonused&&dist(d,fish)<70){d.bonused=true;profile.dolphinMeets++;profile.bestScore=Math.max(profile.bestScore,game.score+150);sounds.dolphinChirp();sounds.kaChing();game.score+=150;popup(d.x,d.y-30,"DOLPHIN BONUS +150","#7df9ff");toast("DOLPHIN BONUS +150! ("+Math.min(profile.dolphinMeets,5)+" / 5)","blue");updateHud();checkMissions();setTimeout(()=>d.bonused=false,8000);}});
  // net
  if(net.active){net.t+=dt;net.r=Math.sin(Math.min(1,net.t/.55)*Math.PI)*105;
    if(net.t<.3){humans.forEach(h=>{if(h.state!=="caught"&&Math.hypot(h.x-net.x,h.y-net.y)<net.r+16){h.state="caught";h.caughtAt=time;net.caught.push(h);onCaught(h);}});}
    net.caught.forEach((h,i)=>{h.x=net.x+Math.sin(i*2.4)*22;h.y=net.y+Math.cos(i*1.9)*18;});
    // crab pinch near net
-   crabs.forEach(c=>{if(time-c.pinchedAt>1.5&&Math.hypot(c.x-net.x,c.y-net.y)<52&&net.caught.length){c.pinchedAt=time;sounds.crabSqueak();sounds.recordScratch();toast("CRAB PINCHED THE NET!","");releaseCaught(false);net.active=false;}});
+   crabs.forEach(c=>{if(time-c.pinchedAt>1.5&&Math.hypot(c.x-net.x,c.y-net.y)<52&&net.caught.length){c.pinchedAt=time;game.pinched=true;sounds.crabSqueak();sounds.recordScratch();toast("CRAB PINCHED THE NET!","");releaseCaught(false);net.active=false;}});
    if(net.active&&net.t>=.55){ // wriggle / snap checks at haul-in
      if(net.caught.length>=3&&Math.random()<.28){sounds.recordScratch();toast("THE NET SNAPPED!","");releaseCaught(true);}
      else{ // one may wriggle free
@@ -338,24 +359,61 @@ function camPos(){return{x:fish.x-Math.cos(fish.angle)*175,y:fish.y-Math.sin(fis
 function project(wx,wy){const c=camPos(),fx=Math.cos(fish.angle),fy=Math.sin(fish.angle);const dx=wx-c.x,dy=wy-c.y;const fwd=dx*fx+dy*fy;if(fwd<15)return null;const side=dx*(-fy)+dy*fx;const F=Math.max(W,H)*0.72,s=F/fwd,horizon=H*0.36+(fish.bob||0)*0.4;return{x:W/2+side*s,y:horizon+78*s,s:s,fwd:fwd,horizon:horizon,F:F};}
 function drawSkyFloor(){
  const F=Math.max(W,H)*0.72,horizon=H*0.36+(fish.bob||0)*0.4;
- const sky=ctx.createLinearGradient(0,0,0,horizon+2);sky.addColorStop(0,"#2f9be8");sky.addColorStop(1,"#aee3ff");ctx.fillStyle=sky;ctx.fillRect(0,0,W,horizon+2);
- ctx.fillStyle="#fff3a6";ctx.beginPath();ctx.arc(W*0.84,H*0.09,19,0,7);ctx.fill();
+ const sky=ctx.createLinearGradient(0,0,0,horizon+2);sky.addColorStop(0,"#3d9be9");sky.addColorStop(.65,"#aee3ff");sky.addColorStop(1,"#ffe9b8");ctx.fillStyle=sky;ctx.fillRect(0,0,W,horizon+2);
+ ctx.fillStyle="#fff3a6";ctx.beginPath();ctx.arc(W*0.84,H*0.09,19,0,7);ctx.fill();ctx.fillStyle="rgba(255,220,130,.35)";ctx.beginPath();ctx.arc(W*0.84,H*0.09,34,0,7);ctx.fill();
  ctx.fillStyle="rgba(255,255,255,.85)";[0.12,0.44,0.66].forEach((fxp,i)=>{const cxp=((fxp*W+time*(6+i*3))%(W+180))-90,cyp=H*(0.06+i*0.05);ctx.beginPath();ctx.ellipse(cxp,cyp,30,10,0,0,7);ctx.ellipse(cxp+20,cyp+3,22,8,0,0,7);ctx.fill();});
  // perspective floor: bands of world ground, coloured by the place each patch belongs to
  const c=camPos(),fx=Math.cos(fish.angle),fy=Math.sin(fish.angle),rx=-fy,ry=fx;
  const bands=[];let f0=42;while(f0<1750){bands.push(f0);f0*=1.16;}bands.push(1750);
  for(let bi=bands.length-2;bi>=0;bi--){const fN=bands[bi],fF=bands[bi+1],fM=(fN+fF)/2;const yT=horizon+78*(F/fF),yB=horizon+78*(F/fN);const sM=F/fM;const sideMax=fM*(W*0.62)/F+80,SEG=14;
-  for(let si=0;si<SEG;si++){const sd=-sideMax+(2*sideMax)*(si+0.5)/SEG;const wx=c.x+fx*fM+rx*sd,wy=c.y+fy*fM+ry*sd;let col="#07304d";if(wx>=0&&wx<WORLD_W&&wy>=0&&wy<WORLD_H){const z=zoneAt(wx,wy);col=((wy-z.y)/z.h>0.58)?z.water:z.ground;}
+  for(let si=0;si<SEG;si++){const sd=-sideMax+(2*sideMax)*(si+0.5)/SEG;const wx=c.x+fx*fM+rx*sd,wy=c.y+fy*fM+ry*sd;let col="#07304d";if(wx>=0&&wx<WORLD_W&&wy>=0&&wy<WORLD_H){const z=zoneAt(wx,wy);col=((wy-z.y)/z.h>0.58)?z.water:z.ground;const bd=Math.min(Math.abs(wx-1300),Math.abs(wx-2600),Math.abs(wx-3900),Math.abs(wy-900));if(bd<58)col="#b08d57";else if(bd<110)col=z.ground;}
    const x1=W/2+(-sideMax+2*sideMax*si/SEG)*sM,x2=W/2+(-sideMax+2*sideMax*(si+1)/SEG)*sM;ctx.fillStyle=col;ctx.fillRect(x1,yT-1,(x2-x1)+1.5,(yB-yT)+2);}}
  ctx.fillStyle="rgba(255,255,255,.35)";ctx.fillRect(0,horizon-1,W,2);
+ const hz=ctx.createLinearGradient(0,horizon-30,0,horizon+90);hz.addColorStop(0,"rgba(255,246,220,0)");hz.addColorStop(.45,"rgba(255,246,220,.28)");hz.addColorStop(1,"rgba(255,246,220,0)");ctx.fillStyle=hz;ctx.fillRect(0,horizon-30,W,120);
  // place-name signs sitting on the horizon for places ahead of you
  ctx.textAlign="center";ZONES.forEach(z=>{const p=project(z.x+z.w/2,z.y+90);if(p&&p.fwd>260&&p.fwd<1600&&p.x>-60&&p.x<W+60){ctx.globalAlpha=clamp(1.6-p.fwd/900,0.15,0.85);ctx.fillStyle="#04263f";ctx.font="700 "+clamp(26*p.s*0.5,10,24)+"px Fredoka,sans-serif";ctx.fillText(z.emoji+" "+z.name.toUpperCase(),p.x,horizon-8);ctx.globalAlpha=1;}});
 }
-const PROPS=[{t:"umb",x:120,y:180},{t:"umb",x:420,y:140},{t:"umb",x:760,y:200},{t:"umb",x:980,y:320},{t:"post",x:1420,y:300},{t:"post",x:1850,y:270},{t:"post",x:2280,y:300},{t:"tree",x:1500,y:1080},{t:"tree",x:1900,y:1020},{t:"tree",x:2300,y:1120},{t:"tree",x:1650,y:1500},{t:"tree",x:2200,y:1560},{t:"ball",x:300,y:1150},{t:"ball",x:800,y:1250},{t:"ball",x:520,y:1500}];
-function drawProp(t,p){const s=p.s*0.5;ctx.save();ctx.translate(p.x,p.y);ctx.scale(s,s);ctx.fillStyle="rgba(0,0,0,.18)";ctx.beginPath();ctx.ellipse(0,0,14,3.5,0,0,7);ctx.fill();
- if(t==="umb"){ctx.strokeStyle="#8a5a2b";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,-34);ctx.stroke();ctx.fillStyle="#c0392b";ctx.beginPath();ctx.moveTo(-26,-32);ctx.lineTo(26,-32);ctx.lineTo(0,-52);ctx.closePath();ctx.fill();}
- else if(t==="tree"){ctx.fillStyle="#6e4520";ctx.fillRect(-4,-26,8,26);ctx.fillStyle="#2e7d32";ctx.beginPath();ctx.arc(0,-40,22,0,7);ctx.arc(-16,-28,14,0,7);ctx.arc(16,-28,14,0,7);ctx.fill();}
- else if(t==="post"){ctx.fillStyle="#5b3a1a";ctx.fillRect(-4,-58,8,58);ctx.fillStyle="#ffd23f";ctx.beginPath();ctx.arc(0,-62,7,0,7);ctx.fill();}
+const PROPS=[];
+function addProp(t,x,y){PROPS.push({t,x,y});}
+/* --- scenery inside each place --- */
+[[120,180],[420,140],[760,200],[980,320]].forEach(([x,y])=>addProp("umb",x,y));addProp("palm",80,420);addProp("palm",1120,520);addProp("rock",600,700);addProp("bush",300,760);
+[[1420,300],[1850,270],[2280,300]].forEach(([x,y])=>addProp("post",x,y));addProp("fence",1600,560);addProp("fence",2100,560);addProp("boat",2350,760);
+[[2700,150],[3050,120],[3500,180],[3800,300],[2750,420],[3300,480],[3650,650],[2900,700]].forEach(([x,y])=>addProp("tree",x,y));
+[[2820,300],[3180,350],[3420,600],[3720,520]].forEach(([x,y])=>addProp("palm",x,y));
+[[2950,250],[3250,220],[3550,420],[3080,620],[3480,760]].forEach(([x,y])=>addProp("fern",x,y));
+[[2680,600],[3880,760],[2620,80]].forEach(([x,y])=>addProp("rock",x,y));addProp("bush",3120,760);addProp("grass",2980,520);addProp("grass",3380,300);addProp("grass",3620,700);
+addProp("falls",4550,90);[[4050,300],[5050,320],[4200,560],[4900,600]].forEach(([x,y])=>addProp("rock",x,y));addProp("tree",4020,650);addProp("tree",5120,680);addProp("bush",4400,420);addProp("fern",4750,480);
+[[300,1150],[800,1250],[520,1500]].forEach(([x,y])=>addProp("ball",x,y));addProp("fountain",650,1180);addProp("umb",1050,1080);addProp("post",150,1650);
+[[1500,1080],[1900,1020],[2300,1120],[1650,1500],[2200,1560]].forEach(([x,y])=>addProp("tree",x,y));addProp("bush",2050,1350);addProp("fern",1750,1250);addProp("rock",2450,1650);
+[[2750,1080],[3050,1150],[3350,1050]].forEach(([x,y])=>addProp("coral",x,y));addProp("shell",2900,1300);addProp("shell",3500,1400);addProp("boat",3650,1560);addProp("palm",2680,1680);addProp("palm",3820,1000);
+addProp("hut",4250,1120);addProp("hut",4820,1180);addProp("stall",4520,1420);[[4050,1500],[5050,1520],[4350,1680]].forEach(([x,y])=>addProp("post",x,y));addProp("fence",4150,1350);addProp("fence",4900,1380);addProp("tree",5120,1000);
+/* --- boundary entrances: log gates / bridges, signposts, torches, fences, stones where places meet --- */
+const CROSS_V=[[1300,450],[2600,450],[3900,450],[1300,1350],[3900,1350]];
+const CROSS_H=[[650,900],[3250,900],[4550,900]];
+CROSS_V.forEach(([x,y])=>{addProp("gate",x,y);addProp("sign",x-78,y+52);addProp("torch",x-48,y-64);addProp("torch",x+48,y-64);[-270,-200,200,270].forEach(dy=>addProp("fence",x,y+dy));addProp("stones",x,y+118);addProp("bush",x+88,y+96);addProp("rock",x-96,y-118);});
+CROSS_H.forEach(([x,y])=>{addProp("gate",x,y);addProp("sign",x+84,y-46);addProp("torch",x-64,y-48);addProp("torch",x+64,y+48);[-270,-200,200,270].forEach(dx=>addProp("fence",x+dx,y));addProp("stones",x+118,y);addProp("bush",x-96,y+84);addProp("rock",x+110,y-92);});
+[[2600,1350],[1950,900]].forEach(([x,y])=>{addProp("bridge",x,y);addProp("sign",x-84,y+52);addProp("torch",x-52,y-58);addProp("torch",x+52,y+58);[-270,-200,200,270].forEach(d=>{addProp("fence",x+(y===900?d:0),y+(y===900?0:d));});addProp("stones",x+100,y+100);});
+function drawProp(t,p){const s=p.s*0.5;ctx.save();ctx.translate(p.x,p.y);ctx.scale(s,s);ctx.fillStyle="rgba(0,0,0,.20)";ctx.beginPath();ctx.ellipse(0,0,16,4,0,0,7);ctx.fill();
+ if(t==="umb"){ctx.strokeStyle="#8a5a2b";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,-34);ctx.stroke();ctx.fillStyle="#c0392b";ctx.beginPath();ctx.moveTo(-26,-32);ctx.lineTo(26,-32);ctx.lineTo(0,-52);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(255,255,255,.25)";ctx.beginPath();ctx.moveTo(-26,-32);ctx.lineTo(0,-52);ctx.lineTo(0,-32);ctx.closePath();ctx.fill();}
+ else if(t==="tree"){ctx.fillStyle="#5b3a1a";ctx.fillRect(-4,-26,8,26);ctx.fillStyle="#1e6b24";ctx.beginPath();ctx.arc(0,-42,23,0,7);ctx.fill();ctx.fillStyle="#2e7d32";ctx.beginPath();ctx.arc(-15,-29,14,0,7);ctx.arc(15,-29,14,0,7);ctx.fill();ctx.fillStyle="#43a047";ctx.beginPath();ctx.arc(-6,-46,11,0,7);ctx.fill();}
+ else if(t==="palm"){ctx.strokeStyle="#7a4a21";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(4,-30,10,-48);ctx.stroke();ctx.strokeStyle="#2e9e44";ctx.lineWidth=4;for(let i=0;i<5;i++){const a=-2.6+i*0.65;ctx.beginPath();ctx.moveTo(10,-48);ctx.quadraticCurveTo(10+Math.cos(a)*22,-48+Math.sin(a)*14-6,10+Math.cos(a)*36,-48+Math.sin(a)*22+8);ctx.stroke();}}
+ else if(t==="bush"){ctx.fillStyle="#2e7d32";ctx.beginPath();ctx.arc(0,-8,13,0,7);ctx.arc(-11,-4,9,0,7);ctx.arc(11,-4,9,0,7);ctx.fill();ctx.fillStyle="#43a047";ctx.beginPath();ctx.arc(-4,-12,7,0,7);ctx.fill();}
+ else if(t==="fern"){ctx.strokeStyle="#35a852";ctx.lineWidth=2.4;for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(i*6,-14, i*11,-20-Math.abs(i)*2);ctx.stroke();}}
+ else if(t==="grass"){ctx.strokeStyle="#57b83e";ctx.lineWidth=2.2;for(let i=-3;i<=3;i++){ctx.beginPath();ctx.moveTo(i*3,0);ctx.quadraticCurveTo(i*4,-16,i*6,-24);ctx.stroke();}}
+ else if(t==="rock"){ctx.fillStyle="#8d99a3";ctx.beginPath();ctx.moveTo(-16,0);ctx.lineTo(-9,-13);ctx.lineTo(3,-17);ctx.lineTo(15,-7);ctx.lineTo(17,0);ctx.closePath();ctx.fill();ctx.fillStyle="#b6c1c9";ctx.beginPath();ctx.moveTo(-9,-13);ctx.lineTo(3,-17);ctx.lineTo(8,-8);ctx.lineTo(-3,-7);ctx.closePath();ctx.fill();}
+ else if(t==="post"||t==="torch"){ctx.fillStyle="#5b3a1a";ctx.fillRect(-4,-58,8,58);ctx.fillStyle="#ffd23f";ctx.beginPath();ctx.arc(0,-62,7,0,7);ctx.fill();if(t==="torch"){ctx.fillStyle="#ff9f1c";ctx.beginPath();ctx.moveTo(0,-76);ctx.quadraticCurveTo(6,-64,0,-58);ctx.quadraticCurveTo(-6,-64,0,-76);ctx.fill();}}
+ else if(t==="gate"){ctx.fillStyle="#6e4520";ctx.fillRect(-34,-64,9,64);ctx.fillRect(25,-64,9,64);ctx.fillStyle="#8a5a2b";ctx.fillRect(-40,-70,80,8);ctx.fillRect(-40,-52,80,6);ctx.fillStyle="#5b3a1a";for(let i=0;i<3;i++)ctx.fillRect(-34,-64+i*3,9,1.6);ctx.fillStyle="#ffd23f";ctx.beginPath();ctx.arc(-29,-70,3.4,0,7);ctx.arc(30,-70,3.4,0,7);ctx.fill();}
+ else if(t==="bridge"){ctx.fillStyle="#8a5a2b";for(let i=-2;i<=2;i++){ctx.fillRect(i*11-5,-8-Math.abs(i)*-2,10,7);}ctx.strokeStyle="#5b3a1a";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-30,-6);ctx.quadraticCurveTo(0,-16,30,-6);ctx.stroke();}
+ else if(t==="sign"){ctx.fillStyle="#5b3a1a";ctx.fillRect(-3,-40,6,40);ctx.fillStyle="#a9743a";rr(-19,-46,38,15,3);ctx.fill();ctx.strokeStyle="#5b3a1a";ctx.lineWidth=1.6;ctx.stroke();ctx.fillStyle="#ffe9b8";ctx.beginPath();ctx.moveTo(-11,-38);ctx.lineTo(4,-38);ctx.lineTo(4,-35);ctx.lineTo(-11,-35);ctx.closePath();ctx.fill();}
+ else if(t==="fence"){ctx.fillStyle="#7a4a21";ctx.fillRect(-24,-20,48,5);ctx.fillRect(-24,-10,48,5);ctx.fillRect(-20,-24,6,24);ctx.fillRect(14,-24,6,24);}
+ else if(t==="stones"){ctx.fillStyle="#9aa7ae";ctx.beginPath();ctx.ellipse(-11,0,8,3.4,0,0,7);ctx.ellipse(2,-1,9,3.8,0,0,7);ctx.ellipse(14,0,7,3,0,0,7);ctx.fill();}
+ else if(t==="hut"){ctx.fillStyle="#8a5a2b";ctx.fillRect(-24,-26,48,26);ctx.fillStyle="#c98f3d";ctx.beginPath();ctx.moveTo(-30,-26);ctx.lineTo(0,-46);ctx.lineTo(30,-26);ctx.closePath();ctx.fill();ctx.fillStyle="#3a2400";ctx.fillRect(-6,-18,12,18);ctx.fillStyle="#ffd23f";ctx.fillRect(12,-20,8,8);}
+ else if(t==="stall"){ctx.fillStyle="#7a4a21";ctx.fillRect(-22,-20,44,20);ctx.fillStyle="#e8481f";ctx.beginPath();ctx.moveTo(-26,-20);ctx.lineTo(26,-20);ctx.lineTo(20,-30);ctx.lineTo(-20,-30);ctx.closePath();ctx.fill();ctx.fillStyle="#ffd23f";ctx.beginPath();ctx.arc(-10,-12,4,0,7);ctx.arc(2,-10,4,0,7);ctx.arc(13,-13,4,0,7);ctx.fill();}
+ else if(t==="fountain"){ctx.fillStyle="#90caf9";ctx.beginPath();ctx.ellipse(0,0,24,8,0,0,7);ctx.fill();ctx.fillStyle="#5b8db8";ctx.fillRect(-3,-24,6,24);ctx.strokeStyle="rgba(160,220,255,.9)";ctx.lineWidth=2;for(let i=-1;i<=1;i++){ctx.beginPath();ctx.moveTo(0,-24);ctx.quadraticCurveTo(i*12,-34,i*16,-12);ctx.stroke();}}
+ else if(t==="coral"){ctx.strokeStyle="#ff7b9c";ctx.lineWidth=3.4;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,-16);ctx.moveTo(0,-9);ctx.lineTo(-8,-18);ctx.moveTo(0,-11);ctx.lineTo(8,-20);ctx.stroke();ctx.strokeStyle="#ffa94d";ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(13,-11);ctx.stroke();}
+ else if(t==="shell"){ctx.fillStyle="#ffe3ec";ctx.beginPath();ctx.arc(0,-3,8,Math.PI,0);ctx.closePath();ctx.fill();ctx.strokeStyle="#f2a6c0";ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(0,-11);ctx.lineTo(0,-3);ctx.moveTo(-5,-9);ctx.lineTo(-3,-3);ctx.moveTo(5,-9);ctx.lineTo(3,-3);ctx.stroke();}
+ else if(t==="boat"){ctx.fillStyle="#a0522d";ctx.beginPath();ctx.moveTo(-24,-6);ctx.lineTo(24,-6);ctx.lineTo(16,4);ctx.lineTo(-16,4);ctx.closePath();ctx.fill();ctx.fillStyle="#5b3a1a";ctx.fillRect(-1,-30,3,24);ctx.fillStyle="#fff";ctx.beginPath();ctx.moveTo(2,-29);ctx.lineTo(16,-8);ctx.lineTo(2,-8);ctx.closePath();ctx.fill();}
+ else if(t==="falls"){ctx.fillStyle="#7d8a91";ctx.beginPath();ctx.moveTo(-46,0);ctx.lineTo(-34,-58);ctx.lineTo(34,-58);ctx.lineTo(46,0);ctx.closePath();ctx.fill();const wg=ctx.createLinearGradient(0,-56,0,0);wg.addColorStop(0,"rgba(220,245,255,.95)");wg.addColorStop(1,"rgba(140,210,245,.75)");ctx.fillStyle=wg;ctx.fillRect(-15,-56,30,56);ctx.fillStyle="rgba(255,255,255,.75)";ctx.beginPath();ctx.ellipse(0,1,26,5,0,0,7);ctx.fill();}
  else{ctx.fillStyle="#ff5470";ctx.beginPath();ctx.arc(0,-7,9,0,7);ctx.fill();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(-3,-10,3.4,0,7);ctx.fill();}
  ctx.restore();}
 function drawHumanAt(h,p){const s=p.s*0.5;ctx.save();ctx.translate(p.x,p.y);ctx.scale(s,s);ctx.translate(0,-26);
@@ -367,8 +425,9 @@ function drawHumanAt(h,p){const s=p.s*0.5;ctx.save();ctx.translate(p.x,p.y);ctx.
  ctx.strokeStyle=h.skin;ctx.lineWidth=5;ctx.lineCap="round";
  ctx.beginPath();ctx.moveTo(-4,8);ctx.lineTo(-5+step,24);ctx.stroke();ctx.beginPath();ctx.moveTo(4,8);ctx.lineTo(5-step,24);ctx.stroke();
  ctx.fillStyle=h.suit;rr(-10,-8,20,17,6);ctx.fill();
+ ctx.fillStyle="rgba(0,0,0,.18)";rr(1,-8,9,17,6);ctx.fill();ctx.fillStyle="rgba(255,255,255,.20)";rr(-10,-8,6,17,6);ctx.fill();
  ctx.strokeStyle=h.skin;ctx.beginPath();ctx.moveTo(-9,-2);ctx.lineTo(-15,6+step*.4);ctx.moveTo(9,-2);ctx.lineTo(15,6-step*.4);ctx.stroke();
- ctx.fillStyle=h.skin;ctx.beginPath();ctx.arc(0,-17,8,0,7);ctx.fill();ctx.fillStyle=h.hair;ctx.beginPath();ctx.arc(0,-20,8,Math.PI,0);ctx.fill();
+ ctx.fillStyle=h.skin;ctx.beginPath();ctx.arc(0,-17,8,0,7);ctx.fill();ctx.fillStyle="rgba(0,0,0,.12)";ctx.beginPath();ctx.arc(2.6,-17,6.4,0,7);ctx.fill();ctx.fillStyle=h.hair;ctx.beginPath();ctx.arc(0,-20,8,Math.PI,0);ctx.fill();
  ctx.fillStyle="#20303c";ctx.beginPath();ctx.arc(3,-17,1.3,0,7);ctx.fill();
  if(h.golden){ctx.strokeStyle="#ffd23f";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(0,2,15,22,0,0,7);ctx.stroke();}
  ctx.restore();
@@ -393,8 +452,16 @@ function drawFishyForeground(){const av=AVATARS[profile.currentAvatar]||AVATARS.
  const g=ctx.createLinearGradient(0,-14,0,14);g.addColorStop(0,av.top);g.addColorStop(1,av.bottom);ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(0,0,25,14.5,0,0,7);ctx.fill();
  ctx.fillStyle="rgba(255,255,255,.92)";ctx.beginPath();ctx.ellipse(-6,0,4.6,13.4,.12,0,7);ctx.fill();ctx.beginPath();ctx.ellipse(8,0,3.6,12.6,.12,0,7);ctx.fill();
  ctx.fillStyle=av.tail;ctx.beginPath();ctx.moveTo(-4,-12);ctx.quadraticCurveTo(3,-21,10,-12);ctx.closePath();ctx.fill();
- if(av.crown){ctx.fillStyle="#ffd23f";ctx.strokeStyle="#b97e04";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-2,-22);ctx.lineTo(0,-28);ctx.lineTo(4,-23);ctx.lineTo(7,-28);ctx.lineTo(10,-22);ctx.closePath();ctx.fill();ctx.stroke();}
- if(profile.currentAvatar==="rainbow"){ctx.fillStyle=`hsl(${Math.floor(time*120)%360},90%,60%)`;ctx.beginPath();ctx.arc(-12,6,3.4,0,7);ctx.fill();}
+ const acc=av.acc;
+ if(acc==="crown"||acc==="kingcrown"){const k=acc==="kingcrown"?1.45:1;ctx.save();ctx.scale(k,k);ctx.fillStyle="#ffd23f";ctx.strokeStyle="#b97e04";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-2,-15);ctx.lineTo(0,-21);ctx.lineTo(4,-16);ctx.lineTo(7,-21);ctx.lineTo(10,-15);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();if(acc==="kingcrown"){ctx.fillStyle="#c1121f";ctx.beginPath();ctx.moveTo(-22,-2);ctx.lineTo(-33,13);ctx.lineTo(-19,10);ctx.closePath();ctx.fill();}}
+ if(acc==="rainbow"){ctx.fillStyle=`hsl(${Math.floor(time*120)%360},90%,60%)`;ctx.beginPath();ctx.arc(-12,6,3.4,0,7);ctx.fill();}
+ if(acc==="safari"){ctx.fillStyle="#d9b26a";ctx.beginPath();ctx.ellipse(3,-13,13,3.6,0,0,7);ctx.fill();ctx.fillStyle="#c49a4a";ctx.beginPath();ctx.arc(3,-14,7.5,Math.PI,0);ctx.fill();}
+ if(acc==="pirate"){ctx.fillStyle="#1d1d22";ctx.beginPath();ctx.arc(3,-13,9,Math.PI,0);ctx.fill();ctx.fillRect(-7,-13,21,3);ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(3,-16,2.2,0,7);ctx.fill();ctx.strokeStyle="#111";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(4,-12);ctx.lineTo(19,-4);ctx.stroke();ctx.fillStyle="#111";ctx.beginPath();ctx.arc(13,-4,4.4,0,7);ctx.fill();}
+ if(acc==="party"){ctx.fillStyle="#ff5d8f";ctx.beginPath();ctx.moveTo(-3,-13);ctx.lineTo(4,-27);ctx.lineTo(10,-12);ctx.closePath();ctx.fill();ctx.fillStyle="#ffd23f";ctx.beginPath();ctx.arc(4,-27,2.6,0,7);ctx.fill();ctx.fillStyle="rgba(10,10,20,.88)";rr(6,-8,15,6,3);ctx.fill();}
+ if(acc==="leaf"){ctx.fillStyle="#2f6b0f";for(let i=0;i<4;i++){ctx.save();ctx.translate(-3+i*5,-14);ctx.rotate(-.5+i*.35);ctx.beginPath();ctx.ellipse(0,-4,3,7,0,0,7);ctx.fill();ctx.restore();}ctx.fillStyle="rgba(30,80,20,.35)";ctx.beginPath();ctx.arc(-10,4,3,0,7);ctx.arc(16,7,2.6,0,7);ctx.fill();}
+ if(acc==="angel"){ctx.strokeStyle="#ffd23f";ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(4,-21,8,2.8,0,0,7);ctx.stroke();ctx.fillStyle="rgba(255,255,255,.92)";ctx.beginPath();ctx.ellipse(-24,-6,9,4.4,-.5,0,7);ctx.fill();}
+ if(acc==="ninja"){ctx.fillStyle="#d90429";ctx.fillRect(-6,-15,20,5);ctx.beginPath();ctx.moveTo(-6,-12);ctx.lineTo(-13,-6);ctx.lineTo(-9,-12);ctx.closePath();ctx.fill();}
+ if(acc==="robot"){ctx.strokeStyle="#6b7280";ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(-14,0);ctx.lineTo(20,0);ctx.moveTo(2,-13);ctx.lineTo(2,12);ctx.stroke();ctx.strokeStyle="#374151";ctx.beginPath();ctx.moveTo(3,-13);ctx.lineTo(3,-22);ctx.stroke();ctx.fillStyle="#ef4444";ctx.beginPath();ctx.arc(3,-24,2.8,0,7);ctx.fill();ctx.fillStyle="#22d3ee";ctx.fillRect(10,-7,6,5);}
  if(net.active){ctx.strokeStyle="#8a5a2b";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(14,4);ctx.lineTo(38,8);ctx.stroke();}
  ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(13,-4,5.2,0,7);ctx.fill();ctx.fillStyle="#20303c";ctx.beginPath();ctx.arc(14.6,-4,2.6,0,7);ctx.fill();
  ctx.strokeStyle="#8a4a00";ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(17,2.5,4.6,.25,1.5);ctx.stroke();ctx.restore();
@@ -405,6 +472,8 @@ function drawFishyForeground(){const av=AVATARS[profile.currentAvatar]||AVATARS.
 function drawAimNet(){const a=fishAnchor(),handX=a.x+fish.dir*20*a.s,handY=a.feetY-44*a.s;
  if(net.active){const p=project(net.x,net.y);if(p){const r=Math.max(3,net.r*p.s*0.5);ctx.strokeStyle="rgba(138,90,43,.85)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(handX,handY);ctx.lineTo(p.x,p.y-r*0.4);ctx.stroke();ctx.save();ctx.translate(p.x,p.y-r*0.4);ctx.strokeStyle="rgba(255,255,255,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(0,0,r,r*0.42,0,0,7);ctx.stroke();ctx.strokeStyle="rgba(255,255,255,.5)";ctx.lineWidth=1.2;ctx.beginPath();for(let i=-2;i<=2;i++){ctx.moveTo(i*r/3,-r*0.42);ctx.lineTo(i*r/3,r*0.42);}ctx.stroke();ctx.restore();}}
  else if(state.playing){const tx=fish.x+Math.cos(fish.angle)*118,ty=fish.y+Math.sin(fish.angle)*118;const p=project(tx,ty);if(p){const r=(54+Math.sin(time*4)*5)*p.s*0.5;ctx.save();ctx.setLineDash([8,7]);ctx.strokeStyle="#ffd23f";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(p.x,p.y,r,r*0.4,0,0,7);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle="#ffd23f";ctx.beginPath();ctx.arc(p.x,p.y,3.5,0,7);ctx.fill();ctx.restore();}}}
+function drawForegroundFoliage(){ctx.save();ctx.strokeStyle="rgba(23,94,36,.85)";ctx.lineWidth=5;ctx.lineCap="round";for(let sgn=-1;sgn<=1;sgn+=2){for(let i=0;i<4;i++){const bx=sgn<0?i*16:W-i*16,by=sgn<0?-6:-6;ctx.beginPath();ctx.moveTo(sgn<0?0:W,0);ctx.quadraticCurveTo(bx+(sgn<0?26:-26),18+i*7,bx+(sgn<0?58:-58),34+i*11);ctx.stroke();}}
+ ctx.strokeStyle="rgba(38,120,44,.9)";ctx.lineWidth=3;const gz=["jungle","river","falls"].includes(zoneAt(fish.x,fish.y).id)?1:.45;ctx.globalAlpha=gz;for(let i=0;i<26;i++){const gx=(i/25)*W+((i*37)%13),gh=14+((i*53)%22);ctx.beginPath();ctx.moveTo(gx,H);ctx.quadraticCurveTo(gx+4,H-gh,gx+((i%3)-1)*7,H-gh-8);ctx.stroke();}ctx.restore();}
 function draw(){ctx.clearRect(0,0,W,H);drawSkyFloor();
  const ents=[];
  PROPS.forEach(pr=>{const p=project(pr.x,pr.y);if(p&&p.x>-70&&p.x<W+70)ents.push({fwd:p.fwd,f:()=>drawProp(pr.t,p)});});
@@ -415,6 +484,7 @@ function draw(){ctx.clearRect(0,0,W,H);drawSkyFloor();
  ents.sort((a,b)=>b.fwd-a.fwd);ents.forEach(e=>e.f()); // far first, near last = perspective depth
  drawAimNet();
  drawFishyForeground(); // drawn last: the whole avatar is ALWAYS fully visible
+ drawForegroundFoliage(); // palm fronds + grass framing the 3D view, like a jungle clearing
  ctx.textAlign="center";popups.forEach(p=>{const pr=project(p.x,p.y);if(!pr)return;ctx.globalAlpha=clamp(1.2-p.t,0,1);ctx.fillStyle=p.color;ctx.font="700 "+clamp(17*pr.s*0.5,11,24)+"px Fredoka,sans-serif";ctx.fillText(p.text,pr.x,pr.y-64*pr.s*0.5-p.t*22);});ctx.globalAlpha=1;
  const vg=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.75);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,20,40,.28)");ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);}
 
@@ -422,8 +492,8 @@ let lastTs=0;function frame(ts){const dt=Math.min(.05,(ts-lastTs)/1000||.016);la
 
 /* ================= ROUND / HUD ================= */
 function updateHud(){hudScore.textContent=game.score;hudCaught.textContent=game.caught;hudCombo.textContent="×"+game.bestCombo;}
-function startRound(){game.score=0;game.caught=0;game.bestCombo=0;game.timeLeft=GAME_LEN;game.visited=new Set(["beach"]);bots.forEach((b,i)=>b.score=[120,80,40][i]);fish.x=400;fish.y=450;fish.angle=0;fish.lean=0;net.active=false;net.caught=[];seedWorld();spawnAt(610,415,false);spawnAt(730,545,true);spawnAt(665,345,false);spawnAt(880,470,false);state.playing=true;castBtn.disabled=false;hudTime.classList.remove("low");updateHud();updateLeader();toast("ROAM & CATCH THE HUMANS!","blue");}
-function endGame(){state.playing=false;castBtn.disabled=true;if(net.caught.length)releaseCaught(false);net.active=false;sounds.gameOver();document.getElementById("finalScore").textContent=game.score;document.getElementById("finalCaught").textContent=game.caught;document.getElementById("finalCombo").textContent="×"+game.bestCombo;document.getElementById("finalPlaces").textContent=game.visited.size+" / 4";document.getElementById("finalSpecial").textContent=profile.specialCaught+" / 20";const doneList=MISSIONS.filter(m=>profile.done.has(m.id)).map(m=>m.title);const nextM=MISSIONS.find(m=>!profile.done.has(m.id));document.getElementById("overMissions").innerHTML="🎯 <b>Missions done: "+profile.done.size+" / 4</b>"+(doneList.length?" — "+doneList.join(", "):"")+(nextM?"<br/>Next: "+nextM.icon+" "+nextM.title+" — "+Math.min(nextM.get(),nextM.target)+" / "+nextM.target+". Mission progress carries into the next round!":"<br/>All missions complete — legend! 🏆");renderMissions();document.getElementById("overLine").textContent=game.caught===0?"Not a single human?! They are still laughing in all four places.":game.visited.size===4?"World tour complete — you hunted in every place!":"Time's up! You visited "+game.visited.size+" of 4 places.";document.getElementById("overScreen").hidden=false;}
+function startRound(){game.score=0;game.caught=0;game.bestCombo=0;game.pinched=false;game.timeLeft=GAME_LEN;game.visited=new Set(["beach"]);bots.forEach((b,i)=>b.score=[120,80,40][i]);fish.x=400;fish.y=450;fish.angle=0;fish.lean=0;net.active=false;net.caught=[];seedWorld();spawnAt(610,415,false);spawnAt(730,545,true);spawnAt(665,345,false);spawnAt(880,470,false);state.playing=true;castBtn.disabled=false;hudTime.classList.remove("low");updateHud();updateLeader();toast("ROAM & CATCH THE HUMANS!","blue");}
+function endGame(){state.playing=false;castBtn.disabled=true;if(net.caught.length)releaseCaught(false);net.active=false;profile.bestScore=Math.max(profile.bestScore,game.score);if(!game.pinched)profile.cleanRounds=Math.max(profile.cleanRounds,1);sounds.gameOver();checkMissions();document.getElementById("finalScore").textContent=game.score;document.getElementById("finalCaught").textContent=game.caught;document.getElementById("finalCombo").textContent="×"+game.bestCombo;document.getElementById("finalPlaces").textContent=game.visited.size+" / "+ZONES.length;document.getElementById("finalSpecial").textContent=profile.specialCaught+" / 20";const doneList=MISSIONS.filter(m=>profile.done.has(m.id)).map(m=>m.title);const nextM=MISSIONS.find(m=>!profile.done.has(m.id));document.getElementById("overMissions").innerHTML="🎯 <b>Missions done: "+profile.done.size+" / "+MISSIONS.length+"</b>"+(doneList.length?" — "+doneList.join(", "):"")+(nextM?"<br/>Next: "+nextM.icon+" "+nextM.title+" — "+Math.min(nextM.get(),nextM.target)+" / "+nextM.target+". Mission progress carries into the next round!":"<br/>All missions complete — legend! 🏆");renderMissions();document.getElementById("overLine").textContent=game.caught===0?"Not a single human?! They are still laughing in all eight places.":game.visited.size===ZONES.length?"World tour complete — you hunted in every place!":"Time's up! You visited "+game.visited.size+" of "+ZONES.length+" places.";document.getElementById("overScreen").hidden=false;}
 
 /* ================= INPUT ================= */
 const stick=document.getElementById("stick"),knob=document.getElementById("stickKnob");
