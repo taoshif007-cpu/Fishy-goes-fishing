@@ -1,6 +1,6 @@
 # Fishy Goes Fishing 🎣🐟
 
-An **open-world** reverse-fishing meme game: you're a fish who grew **human legs**, roaming a big world and catching humans in different places.
+An **open-world, character-POV** reverse-fishing meme game: you're a fish who grew **human legs**, roaming a big world and catching humans in different places. The camera rides behind and above Fishy like a 3D .io game, so the **whole avatar is always visible** in the foreground while the world stretches ahead of him in perspective — horizon, sky, and the four places with their signs on the horizon.
 
 ## The world
 
@@ -22,7 +22,7 @@ Like a 3D fishing .io game: a live **leaderboard** with rival players, a **minim
 Or open `index.html` in any browser. Tap **Click to Start** first — browsers block sound until the first tap/click.
 
 - **Android / iPhone:** on-screen joystick to walk, tap **CAST NET**
-- **PC:** WASD / arrow keys to walk, **Space** to cast, or drag with the mouse
+- **PC:** WASD to walk the way Fishy is facing, drag or ←/→ to swing the camera/turn, **Space** to cast
 
 ## Missions & avatars
 
