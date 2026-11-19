@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- viewport-fit=cover + user-scalable=no: fills notched phones, no pinch/double-tap zoom while playing -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="data:," />
+    <title>Fishy Goes Fishing — Meme Sound Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        --ink:#eaf7ff;
+        --ink-dim:#a9cbe0;
+        --deep:#04263f;
+        --panel:rgba(3,30,50,.78);
+        --panel-edge:rgba(140,220,255,.22);
+        --accent:#ffb703;
+        --accent-ink:#3a2400;
+        --coral:#ff6b4a;
+        --teal:#1fd1c0;
+        --danger:#ff5470;
+      }
+      *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+      html,body{ height:100%; }
+      body{
+        margin:0;
+        position:fixed; inset:0;           /* hard-stop page scroll on iOS */
+        overflow:hidden;
+        overscroll-behavior:none;
+        background:radial-gradient(120% 90% at 50% 0%, #0a4a73 0%, #063453 55%, #032138 100%);
+        color:var(--ink);
+        font-family:"Nunito", system-ui, sans-serif;
+        touch-action:none;
+        user-select:none; -webkit-user-select:none;
+      }
+      #app{
+        height:100dvh;
+        display:flex; flex-direction:column;
+        padding:calc(6px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right))
+                calc(6px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left));
+        gap:8px;
+        max-width:1100px; margin:0 auto; width:100%;
+      }
+
+      /* ---------- HUD ---------- */
+      #hud{
+        display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+        background:var(--panel); border:1px solid var(--panel-edge);
+        border-radius:14px; padding:6px 10px;
+      }
+      .stat{ display:flex; flex-direction:column; line-height:1.05; min-width:64px; }
+      .stat .label{ font-size:.62rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-dim); }
+      .stat .value{ font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.3rem; }
+      #hudTime.low{ color:var(--danger); animation:pulse .5s infinite alternate; }
+      @keyframes pulse{ from{ transform:scale(1);} to{ transform:scale(1.12);} }
+      #hud .spacer{ flex:1; }
+      .audio-controls{ display:flex; align-items:center; gap:8px; }
+      #muteBtn{
+        width:44px; height:44px; border-radius:12px; border:1px solid var(--panel-edge);
+        background:rgba(255,255,255,.07); color:var(--ink); cursor:pointer;
+        display:grid; place-items:center; padding:0;
+      }
+      #muteBtn:active{ transform:scale(.94); }
+      #muteBtn svg{ width:24px; height:24px; }
+      #muteBtn .icon-muted{ display:none; }
+      #muteBtn.is-muted .icon-muted{ display:block; }
+      #muteBtn.is-muted .icon-sound{ display:none; }
+      .vol-wrap{ display:flex; align-items:center; gap:6px; }
+      .vol-wrap label{ font-size:.68rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim); }
+      input[type="range"]{
+        -webkit-appearance:none; appearance:none;
+        width:104px; height:36px; background:transparent; cursor:pointer; touch-action:pan-x;
+      }
+      input[type="range"]::-webkit-slider-runnable-track{ height:8px; border-radius:99px; background:linear-gradient(90deg,var(--teal),var(--accent)); }
+      input[type="range"]::-webkit-slider-thumb{
+        -webkit-appearance:none; width:22px; height:22px; border-radius:50%;
+        background:#fff; border:3px solid var(--deep); margin-top:-7px;
+        box-shadow:0 2px 6px rgba(0,0,0,.45);
+      }
+      input[type="range"]::-moz-range-track{ height:8px; border-radius:99px; background:var(--teal); }
+      input[type="range"]::-moz-range-thumb{ width:18px; height:18px; border-radius:50%; background:#fff; border:3px solid var(--deep); }
+
+      /* ---------- Stage ---------- */
+      #stage{
+        position:relative; flex:1; min-height:0;
+        border-radius:18px; overflow:hidden;
+        border:1px solid var(--panel-edge);
+        box-shadow:0 18px 50px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04);
+        background:#07507c;
+      }
+      canvas#game{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+
+      #toast{
+        position:absolute; top:12px; left:50%; transform:translate(-50%,-16px) scale(.9);
+        font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(1.15rem,4.5vw,1.9rem);
+        color:#fff; text-shadow:0 3px 0 rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.5);
+        background:linear-gradient(180deg, var(--coral), #e8481f);
+        padding:.3em .9em; border-radius:99px; white-space:nowrap;
+        opacity:0; pointer-events:none; transition:opacity .18s, transform .18s;
+      }
+      #toast.show{ opacity:1; transform:translate(-50%,0) scale(1); }
+      #toast.gold{ background:linear-gradient(180deg,#ffd23f,#f59e0b); color:var(--accent-ink); text-shadow:none; }
+      #toast.blue{ background:linear-gradient(180deg,#38bdf8,#0369a1); }
+
+      /* ---------- Overlays ---------- */
+      .overlay{
+        position:absolute; inset:0; z-index:5;
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+        text-align:center; padding:20px; gap:10px;
+        background:radial-gradient(90% 70% at 50% 30%, rgba(10,90,140,.88), rgba(2,24,43,.96));
+        backdrop-filter:blur(2px);
+      }
+      .overlay[hidden]{ display:none; }
+      .overlay h1{
+        font-family:"Fredoka",sans-serif; font-weight:700;
+        font-size:clamp(2rem,8.5vw,3.6rem); line-height:1.02; margin:0;
+        color:#fff; text-shadow:0 4px 0 rgba(0,0,0,.3);
+      }
+      .overlay h1 .hl{ color:var(--accent); }
+      .overlay p{ margin:0; max-width:46ch; color:var(--ink-dim); font-weight:700; font-size:clamp(.92rem,3.4vw,1.05rem); }
+      .howto{
+        display:grid; gap:6px; margin:8px 0 4px; text-align:left;
+        font-weight:700; font-size:clamp(.85rem,3.2vw,.98rem); color:var(--ink);
+      }
+      .howto span b{ color:var(--accent); font-family:"Fredoka",sans-serif; }
+      kbd{
+        font-family:"Fredoka",sans-serif; font-size:.82em; background:#0b3d5f; color:#fff;
+        border:1px solid rgba(255,255,255,.35); border-bottom-width:3px; border-radius:6px; padding:.05em .45em;
+      }
+      .big-btn{
+        font-family:"Fredoka",sans-serif; font-weight:700;
+        font-size:clamp(1.25rem,5vw,1.6rem);
+        color:var(--accent-ink); background:linear-gradient(180deg,#ffd23f,var(--accent));
+        border:none; border-radius:99px; padding:.65em 1.6em; cursor:pointer;
+        box-shadow:0 6px 0 #b97e04, 0 14px 28px rgba(0,0,0,.4);
+        min-height:56px; margin-top:8px;
+        animation:glowPulse 1.6s ease-in-out infinite;
+      }
+      .big-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 #b97e04; }
+      @keyframes glowPulse{ 0%,100%{ box-shadow:0 6px 0 #b97e04, 0 14px 28px rgba(0,0,0,.4);} 50%{ box-shadow:0 6px 0 #b97e04, 0 14px 38px rgba(255,183,3,.55);} }
+      .final-stats{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; margin-top:4px; }
+      .final-stats .stat{ align-items:center; min-width:84px; }
+      .final-stats .value{ font-size:1.9rem; color:var(--accent); }
+      .tiny-note{ font-size:.78rem !important; color:var(--ink-dim) !important; }
+
+      /* ---------- Bottom controls ---------- */
+      #controls{ display:flex; align-items:center; gap:12px; }
+      #hint{ flex:1; font-size:.8rem; font-weight:700; color:var(--ink-dim); line-height:1.35; }
+      #hint b{ color:var(--ink); }
+      #castBtn{
+        font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.15rem;
+        color:#fff; background:linear-gradient(180deg,#ff8266,var(--coral));
+        border:none; border-radius:16px; padding:0 26px; height:56px; cursor:pointer;
+        box-shadow:0 5px 0 #b93a1e, 0 10px 22px rgba(0,0,0,.35);
+        touch-action:none; white-space:nowrap;
+      }
+      #castBtn:active{ transform:translateY(3px); box-shadow:0 2px 0 #b93a1e; }
+      #castBtn:disabled{ filter:grayscale(.6) brightness(.7); box-shadow:none; }
+
+      @media (max-width:560px){
+        .stat{ min-width:52px; }
+        .stat .value{ font-size:1.1rem; }
+        .vol-wrap label{ display:none; }
+        input[type="range"]{ width:78px; }
+        #hint{ font-size:.72rem; }
+        #castBtn{ font-size:1.02rem; padding:0 18px; height:52px; }
+      }
+      @media (prefers-reduced-motion: reduce){
+        .big-btn, #hudTime.low{ animation:none; }
+      }    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- ================= HUD ================= -->
+      <header id="hud">
+        <div class="stat"><span class="label">Score</span><span class="value" id="hudScore">0</span></div>
+        <div class="stat"><span class="label">Time</span><span class="value" id="hudTime">75</span></div>
+        <div class="stat"><span class="label">Caught</span><span class="value" id="hudCaught">0</span></div>
+        <div class="stat"><span class="label">Best combo</span><span class="value" id="hudCombo">×0</span></div>
+        <div class="spacer"></div>
+        <div class="audio-controls">
+          <div class="vol-wrap">
+            <label for="volSlider">Volume</label>
+            <input type="range" id="volSlider" min="0" max="100" value="80" aria-label="Volume" />
+          </div>
+          <button id="muteBtn" type="button" aria-label="Mute sound" aria-pressed="false">
+            <svg class="icon-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9.4 9.4 0 0 1 0 13"/></svg>
+            <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z" fill="currentColor" stroke="none"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- ================= Stage ================= -->
+      <div id="stage">
+        <canvas id="game"></canvas>
+        <div id="toast" role="status"></div>
+
+        <!-- Click-to-start screen: the first tap/click unlocks browser audio -->
+        <div class="overlay" id="startScreen">
+          <h1>Fishy Goes <span class="hl">Fishing</span></h1>
+          <p>Revenge at last — you're the fish, and the swimmers up top are the catch. Cast your net, haul them down, and don't let the crabs snip your line.</p>
+          <div class="howto">
+            <span><b>Move</b> — drag, move the mouse, or <kbd>←</kbd> <kbd>→</kbd></span>
+            <span><b>Cast net</b> — tap the water, click, <kbd>Space</kbd>, or the CAST button</span>
+            <span><b>Combo</b> — net 3+ swimmers in one cast for an airhorn bonus</span>
+            <span><b>Beware</b> — crabs pinch lines, heavy nets snap, swimmers wriggle free</span>
+          </div>
+          <button class="big-btn" id="startBtn" type="button">Click to Start</button>
+          <p class="tiny-note">Sound on for the full meme experience — every effect is synthesized live in code, no audio files.</p>
+        </div>
+
+        <!-- Game over screen -->
+        <div class="overlay" id="overScreen" hidden>
+          <h1>Dun Dun <span class="hl">Dunnn…</span></h1>
+          <p id="overLine">Time's up! The swimmers live to splash another day.</p>
+          <div class="final-stats">
+            <div class="stat"><span class="label">Final score</span><span class="value" id="finalScore">0</span></div>
+            <div class="stat"><span class="label">Humans caught</span><span class="value" id="finalCaught">0</span></div>
+            <div class="stat"><span class="label">Best combo</span><span class="value" id="finalCombo">×0</span></div>
+          </div>
+          <button class="big-btn" id="againBtn" type="button">Play Again</button>
+        </div>
+      </div>
+
+      <!-- ================= Bottom controls ================= -->
+      <footer id="controls">
+        <div id="hint"><b>Touch:</b> drag to swim, tap to cast &nbsp;•&nbsp; <b>PC:</b> <kbd>←</kbd><kbd>→</kbd> move, <kbd>Space</kbd> cast</div>
+        <button id="castBtn" type="button" disabled>CAST NET</button>
+      </footer>
+    </div>
+
+    <script>
+    "use strict";
+    /* ================================================================
+       FISHY GOES FISHING — a reverse-fishing game with meme sounds.
+       Every sound effect below is SYNTHESIZED in code with the
+       Web Audio API (no audio files), and the silly voice lines use
+       speechSynthesis. All effects live in ONE object: `sounds`,
+       one function per sound, right after the audio engine.
+       ================================================================ */
+
+    // ---------------- Global state ----------------
+    const state = {
+      volume: 0.8,      // 0..1, driven by the volume slider
+      muted: false,     // driven by the mute button
+      started: false,   // true after the Click-to-Start screen
+      playing: false    // true while a round is running
+    };
+
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+    // ================================================================
+    //  AUDIO ENGINE — one shared AudioContext + master gain, so the
+    //  volume slider and mute button control EVERYTHING at once.
+    // ================================================================
+    let actx = null;    // the AudioContext (created on first user tap — browsers require it)
+    let master = null;  // master GainNode: all sounds route through here
+
+    function ensureCtx() {
+      if (!actx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        actx = new AC();
+        master = actx.createGain();
+        master.gain.value = state.muted ? 0 : state.volume;
+        master.connect(actx.destination);
+      }
+      if (actx.state === "suspended") actx.resume();
+      return actx;
+    }
+
+    // Play one oscillator tone with a pitch sweep + volume envelope.
+    function tone({ type = "sine", from = 440, to = null, dur = 0.2, vol = 0.4, delay = 0, attack = 0.006 }) {
+      if (state.muted || !ensureCtx()) return;
+      const t0 = actx.currentTime + delay;
+      const osc = actx.createOscillator();
+      const g = actx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(Math.max(20, from), t0);
+      if (to !== null) osc.frequency.exponentialRampToValueAtTime(Math.max(20, to), t0 + dur);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(vol, t0 + attack);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      osc.connect(g); g.connect(master);
+      osc.start(t0); osc.stop(t0 + dur + 0.05);
+    }
+
+    // Shared white-noise buffer (for scratches / splashes).
+    let _noiseBuf = null;
+    function noiseBuffer() {
+      if (_noiseBuf) return _noiseBuf;
+      const len = actx.sampleRate;
+      _noiseBuf = actx.createBuffer(1, len, actx.sampleRate);
+      const d = _noiseBuf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      return _noiseBuf;
+    }
+
+    /* ================================================================
+       ★★★  HOW TO SWAP ANY SOUND FOR YOUR OWN .mp3 FILE  ★★★
+       ------------------------------------------------------------
+       1. Drop your file into this artifact's  assets/  folder,
+          e.g.  assets/boing.mp3
+       2. Find the sound in the `sounds` object below, comment out
+          its synth code, and make the whole body just:
+
+              playFile("assets/boing.mp3");
+
+          playFile() routes through the same volume slider + mute
+          button as the synthesized sounds. That's it — done!
+       ================================================================ */
+    function playFile(url) {
+      if (state.muted) return;
+      const a = new Audio(url);
+      a.volume = state.volume;
+      a.play().catch(() => { /* file missing etc. — fail silently */ });
+    }
+
+    // ---------------- Silly voice lines (speechSynthesis) ----------------
+    const CAUGHT_LINES = ["Oh no!", "Not again!", "Help me!", "Why me?"];
+    const ESCAPE_LINES = ["Nice try, fishy!", "Too slow!", "Hahaha!"];
+
+    function speakLine(text, pitch, rate) {
+      if (state.muted || !("speechSynthesis" in window)) return;
+      try {
+        const u = new SpeechSynthesisUtterance(text);
+        u.pitch = pitch;
+        u.rate = rate;
+        u.volume = state.volume;
+        speechSynthesis.speak(u);
+      } catch (e) { /* speech is a garnish — never break the game */ }
+    }
+
+    // ================================================================
+    //  ★ THE SOUNDS OBJECT ★ — one function per sound effect.
+    //  Edit, retune or replace any of these (see the .mp3 note above).
+    // ================================================================
+    const sounds = {
+
+      // -- CAUGHT: cartoon "boing" (springy pitch sweep down, then bounce back up)
+      boing() {
+        // playFile("assets/boing.mp3");  // ← swap for an .mp3 like this
+        tone({ type: "sine", from: 340, to: 55,  dur: 0.14, vol: 0.55 });
+        tone({ type: "sine", from: 130, to: 260, dur: 0.10, vol: 0.38, delay: 0.12 });
+        tone({ type: "sine", from: 210, to: 120, dur: 0.14, vol: 0.26, delay: 0.22 });
+      },
+
+      // -- CAUGHT (alternate): "bonk" — short square-wave thump + a click of noise
+      bonk() {
+        tone({ type: "square", from: 210, to: 60, dur: 0.11, vol: 0.4 });
+        tone({ type: "sine",   from: 140, to: 50, dur: 0.13, vol: 0.45 });
+      },
+
+      // -- CAUGHT ×3+: AIRHORN — layered detuned square waves, fast attack, two blasts
+      airhorn() {
+        if (state.muted || !ensureCtx()) return;
+        const chord = [466.16, 587.33, 698.46]; // B♭ – D – F, the classic airhorn chord
+        chord.forEach(freq => {
+          [0, 7].forEach(detune => {           // two slightly detuned oscs per note = THICK
+            const t0 = actx.currentTime;
+            const osc = actx.createOscillator();
+            osc.type = "square";
+            osc.frequency.value = freq;
+            osc.detune.value = detune;
+            const lp = actx.createBiquadFilter();
+            lp.type = "lowpass"; lp.frequency.value = 2600;
+            const g = actx.createGain();
+            g.gain.setValueAtTime(0.0001, t0);
+            g.gain.exponentialRampToValueAtTime(0.11, t0 + 0.015);   // blast 1
+            g.gain.setValueAtTime(0.11, t0 + 0.30);
+            g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.36);
+            g.gain.setValueAtTime(0.0001, t0 + 0.43);
+            g.gain.exponentialRampToValueAtTime(0.11, t0 + 0.445);   // blast 2 (longer)
+            g.gain.setValueAtTime(0.11, t0 + 0.85);
+            g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.97);
+            osc.connect(lp); lp.connect(g); g.connect(master);
+            osc.start(t0); osc.stop(t0 + 1.0);
+          });
+        });
+      },
+
+      // -- BONUS POINTS: "ka-ching" — the classic two-note coin/register ding
+      kaChing() {
+        tone({ type: "triangle", from: 987.77, dur: 0.07, vol: 0.35 });              // B5 "ka-"
+        tone({ type: "triangle", from: 1318.51, dur: 0.38, vol: 0.35, delay: 0.07 }); // E6 "-ching!"
+        tone({ type: "sine", from: 1567.98, dur: 0.22, vol: 0.14, delay: 0.07 });     // sparkle on top
+      },
+
+      // -- CAUGHT: a random panicked voice line, pitched up for silliness
+      voiceCaught() {
+        if ("speechSynthesis" in window) speechSynthesis.cancel(); // never let lines queue up
+        speakLine(pick(CAUGHT_LINES), rand(1.5, 1.9), 1.05);
+      },
+
+      // -- ESCAPED: sad trombone "wah-wah-wah-waaah" — 4 descending notes, wobbly last one
+      sadTrombone() {
+        if (state.muted || !ensureCtx()) return;
+        const notes = [233.08, 220.00, 207.65, 196.00]; // B♭3, A3, A♭3, G3
+        notes.forEach((freq, i) => {
+          const last = i === notes.length - 1;
+          const dur = last ? 0.95 : 0.34;
+          const t0 = actx.currentTime + i * 0.36;
+          const osc = actx.createOscillator();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(freq, t0);
+          osc.frequency.linearRampToValueAtTime(freq * 0.965, t0 + dur); // sad droop at the end of each note
+          // wobble (vibrato) — gentle on the short notes, wobbly mess on the last
+          const lfo = actx.createOscillator();
+          lfo.frequency.value = 5.4;
+          const lfoGain = actx.createGain();
+          lfoGain.gain.value = last ? 9 : 3;
+          lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
+          const lp = actx.createBiquadFilter();
+          lp.type = "lowpass"; lp.frequency.value = 1050; // muted brass
+          const g = actx.createGain();
+          g.gain.setValueAtTime(0.0001, t0);
+          g.gain.exponentialRampToValueAtTime(0.30, t0 + 0.045);
+          g.gain.setValueAtTime(0.30, t0 + Math.max(0.05, dur - 0.07));
+          g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+          osc.connect(lp); lp.connect(g); g.connect(master);
+          osc.start(t0); osc.stop(t0 + dur + 0.05);
+          lfo.start(t0); lfo.stop(t0 + dur + 0.05);
+        });
+      },
+
+      // -- ESCAPED: evil cartoon laugh — fast up-and-down pitch bursts ("mwah-ha-ha-ha!")
+      evilLaugh() {
+        const bursts = [580, 500, 610, 470, 415, 350]; // pitch jumps up & down per "ha"
+        bursts.forEach((f, i) => {
+          tone({ type: "sawtooth", from: f, to: f * 0.55, dur: 0.11, vol: 0.22, delay: i * 0.125 });
+          tone({ type: "square",   from: f * 0.5, to: f * 0.3, dur: 0.11, vol: 0.10, delay: i * 0.125 });
+        });
+      },
+
+      // -- ESCAPED: a cheeky voice line while the human dances away
+      voiceEscape() {
+        if ("speechSynthesis" in window) speechSynthesis.cancel();
+        speakLine(pick(ESCAPE_LINES), rand(1.25, 1.55), 1.12);
+      },
+
+      // -- LINE SNAPS: record scratch — filtered noise swept back & forth
+      recordScratch() {
+        if (state.muted || !ensureCtx()) return;
+        const t0 = actx.currentTime;
+        const src = actx.createBufferSource();
+        src.buffer = noiseBuffer(); src.loop = true;
+        const bp = actx.createBiquadFilter();
+        bp.type = "bandpass"; bp.Q.value = 7;
+        bp.frequency.setValueAtTime(2600, t0);
+        bp.frequency.exponentialRampToValueAtTime(480, t0 + 0.13);  // drag back…
+        bp.frequency.exponentialRampToValueAtTime(2900, t0 + 0.25); // …shove forward…
+        bp.frequency.exponentialRampToValueAtTime(650, t0 + 0.38);  // …and stop
+        const g = actx.createGain();
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(0.5, t0 + 0.015);
+        g.gain.setValueAtTime(0.5, t0 + 0.32);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.4);
+        src.connect(bp); bp.connect(g); g.connect(master);
+        src.start(t0); src.stop(t0 + 0.42);
+      },
+
+      // -- CRAB PINCH: squeak-honk — two quick rising squeaks
+      crabSqueak() {
+        tone({ type: "sine",   from: 950,  to: 1750, dur: 0.06, vol: 0.32 });
+        tone({ type: "sine",   from: 1100, to: 1900, dur: 0.06, vol: 0.32, delay: 0.09 });
+        tone({ type: "square", from: 520,  to: 470,  dur: 0.07, vol: 0.14, delay: 0.02 }); // little honk underneath
+      },
+
+      // -- DOLPHIN: high-pitched chirp — three quick FM-style sweeps way up high
+      dolphinChirp() {
+        tone({ type: "sine", from: 2400, to: 3950, dur: 0.07, vol: 0.24 });
+        tone({ type: "sine", from: 2650, to: 4200, dur: 0.07, vol: 0.24, delay: 0.09 });
+        tone({ type: "sine", from: 2200, to: 3600, dur: 0.10, vol: 0.20, delay: 0.18 });
+      },
+
+      // -- GAME OVER: dramatic "dun dun dunnn" — three descending doom notes
+      gameOver() {
+        const hits = [146.83, 138.59, 130.81]; // D3, C#3, C3
+        hits.forEach((f, i) => {
+          const last = i === hits.length - 1;
+          const dur = last ? 1.5 : 0.36;
+          const delay = i * 0.4;
+          tone({ type: "sawtooth", from: f, to: f * 0.985, dur, vol: 0.34, delay, attack: 0.01 });
+          tone({ type: "sine",     from: f / 2, to: f / 2, dur, vol: 0.30, delay, attack: 0.01 }); // sub-bass weight
+        });
+      }
+    };
+
+    // ================================================================
+    //  THE GAME — canvas, entities, input, and where sounds trigger.
+    // ================================================================
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const stage = document.getElementById("stage");
+    const hudScore = document.getElementById("hudScore");
+    const hudTime = document.getElementById("hudTime");
+    const hudCaught = document.getElementById("hudCaught");
+    const hudCombo = document.getElementById("hudCombo");
+    const toastEl = document.getElementById("toast");
+    const castBtn = document.getElementById("castBtn");
+
+    const GAME_LEN = 75; // seconds per round
+    let W = 0, H = 0, surfaceY = 0, seabedY = 0, time = 0;
+
+    const game = {
+      score: 0, caught: 0, bestCombo: 0,
+      timeLeft: GAME_LEN,
+      spawnT: 0, crabT: 4, dolphinT: 6,
+      lastVoiceAt: -9, lastTromboneAt: -9
+    };
+
+    const fish = { x: 200, y: 0, targetX: 200, dir: 1, vx: 0 };
+    const net = { state: "idle", x: 0, y: 0, caught: [], cooldown: 0, fast: false };
+    let humans = [], crabs = [], dolphins = [], popups = [], bubbles = [], weeds = [];
+    const keys = {};
+
+    const SKIN = ["#f2c79b", "#e0ac7e", "#c68642", "#8d5524", "#ffdbac"];
+    const HAIR = ["#2b2118", "#5a3a1a", "#8a8a8a", "#c94f30", "#2244aa", "#e8e3d9"];
+    const SUIT = ["#ff5470", "#ffd23f", "#38bdf8", "#7bed6a", "#ff9f1c", "#c77dff"];
+
+    // ---------------- Layout / resize (DPR-crisp, reflows to any screen) ----------------
+    function resize() {
+      const r = stage.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = Math.max(280, r.width); H = Math.max(320, r.height);
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      surfaceY = Math.round(H * 0.17);
+      seabedY = H - Math.round(H * 0.09);
+      fish.y = seabedY - 26;
+      fish.x = clamp(fish.x, 30, W - 30);
+      fish.targetX = clamp(fish.targetX, 30, W - 30);
+      weeds = [];
+      const n = Math.max(5, Math.floor(W / 90));
+      for (let i = 0; i < n; i++) weeds.push({ x: rand(10, W - 10), h: rand(26, 58), phase: rand(0, 6) });
+      if (!bubbles.length) for (let i = 0; i < 26; i++)
+        bubbles.push({ x: rand(0, W), y: rand(0, H), r: rand(1.5, 4.5), s: rand(14, 42) });
+    }
+    window.addEventListener("resize", resize);
+    window.addEventListener("orientationchange", () => setTimeout(resize, 60));
+
+    // ---------------- Spawning ----------------
+    function spawnHuman() {
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      humans.push({
+        x: dir > 0 ? -34 : W + 34,
+        lane: rand(2, 20),
+        dir, speed: rand(34, 78) * (1 + (GAME_LEN - game.timeLeft) / GAME_LEN * 0.35),
+        skin: pick(SKIN), hair: pick(HAIR), suit: pick(SUIT),
+        golden: Math.random() < 0.12,
+        state: "swim", wiggle: rand(0, 9), danceT: 0, caughtAt: 0
+      });
+    }
+    function spawnCrab(midWater) {
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      crabs.push({
+        x: dir > 0 ? -30 : W + 30, dir,
+        y: midWater ? rand(H * 0.38, H * 0.6) : seabedY - 8,
+        speed: rand(16, 30), snap: rand(0, 9), pinchedAt: -9
+      });
+    }
+    function spawnDolphin() {
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      dolphins.push({ x: dir > 0 ? -70 : W + 70, dir, baseY: rand(H * 0.4, H * 0.52), speed: rand(120, 165), phase: rand(0, 9), bonused: false });
+    }
+
+    // ---------------- Toasts & popups ----------------
+    let toastTimer = null;
+    function toast(text, kind) {
+      toastEl.textContent = text;
+      toastEl.className = "show" + (kind ? " " + kind : "");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { toastEl.className = ""; }, 1500);
+    }
+    function popup(x, y, text, color) { popups.push({ x, y, text, color: color || "#fff", t: 0 }); }
+
+    // ---------------- Sound triggers (the fun part) ----------------
+    function onCaught(h) {
+      if (Math.random() < 0.5) sounds.boing(); else sounds.bonk();       // cartoon boing / bonk
+      if (time - game.lastVoiceAt > 0.9) { sounds.voiceCaught(); game.lastVoiceAt = time; }
+      popup(h.x, h.y - 18, h.golden ? "GOLDEN!" : "GOTCHA!", h.golden ? "#ffd23f" : "#ffffff");
+    }
+    function onEscape(h, snapped) {
+      if (time - game.lastTromboneAt > 2.4) { sounds.sadTrombone(); game.lastTromboneAt = time; }
+      if (Math.random() < 0.55) sounds.evilLaugh();
+      if (time - game.lastVoiceAt > 0.9) { sounds.voiceEscape(); game.lastVoiceAt = time; }
+      popup(h.x, h.y - 20, snapped ? "IT SNAPPED!" : "WRIGGLED FREE!", "#ffb3c1");
+    }
+    function releaseCaught(snapped) {
+      net.caught.forEach(h => {
+        h.state = "escape"; h.danceT = 1.15;
+        h.dir = h.x >= net.x ? 1 : -1; h.speed = Math.max(h.speed * 2.1, 95);
+        if (snapped) onEscape(h, true);
+      });
+      net.caught = [];
+    }
+
+    // ---------------- Casting ----------------
+    function castNet() {
+      if (!state.playing || net.state !== "idle" || net.cooldown > 0) return;
+      net.state = "up"; net.x = fish.x; net.y = fish.y - 14;
+      net.caught = []; net.fast = false; net.cooldown = 0.35;
+    }
+
+    function deliverCatch() {
+      const n = net.caught.length;
+      if (!n) return;
+      let pts = 0, anyGolden = false;
+      net.caught.forEach(h => { pts += h.golden ? 250 : 100; if (h.golden) anyGolden = true; });
+      game.caught += n;
+      game.bestCombo = Math.max(game.bestCombo, n);
+      if (n >= 3) {                                   // 3+ in one net → AIRHORN + combo bonus
+        pts += (n - 2) * 75;
+        sounds.airhorn();
+        sounds.kaChing();
+        toast("AIRHORN COMBO ×" + n + "!", "gold");
+      } else if (anyGolden || n === 2) {              // bonus points → ka-ching
+        sounds.kaChing();
+        if (anyGolden) toast("GOLDEN SWIMMER +250!", "gold");
+      }
+      game.score += pts;
+      popup(fish.x, fish.y - 46, "+" + pts, "#ffd23f");
+      humans = humans.filter(h => h.state !== "caught");
+      net.caught = [];
+      updateHud();
+    }
+
+    // ---------------- Update ----------------
+    function update(dt) {
+      time += dt;
+      bubbles.forEach(b => { b.y -= b.s * dt; b.x += Math.sin(time * 2 + b.r) * 6 * dt; if (b.y < surfaceY + 4) { b.y = seabedY - 4; b.x = rand(0, W); } });
+      popups.forEach(p => { p.t += dt; p.y -= 34 * dt; });
+      popups = popups.filter(p => p.t < 1.1);
+      if (!state.playing) return;
+
+      game.timeLeft -= dt;
+      if (game.timeLeft <= 0) { game.timeLeft = 0; endGame(); }
+      const shown = Math.ceil(game.timeLeft);
+      if (hudTime.textContent !== String(shown)) { hudTime.textContent = shown; hudTime.classList.toggle("low", shown <= 10); }
+
+      // Fish movement: keyboard velocity + pointer target both feed in
+      const kv = (keys.ArrowRight || keys.KeyD ? 1 : 0) - (keys.ArrowLeft || keys.KeyA ? 1 : 0);
+      if (kv !== 0) { fish.targetX = clamp(fish.x + kv * 340 * dt * 3.2, 30, W - 30); fish.dir = kv; }
+      const dx = fish.targetX - fish.x;
+      fish.x += clamp(dx, -460 * dt * Math.max(1, Math.abs(dx) / 60), 460 * dt * Math.max(1, Math.abs(dx) / 60));
+      if (Math.abs(dx) > 4) fish.dir = dx > 0 ? 1 : -1;
+      fish.x = clamp(fish.x, 30, W - 30);
+
+      // Spawns
+      game.spawnT -= dt;
+      if (game.spawnT <= 0 && humans.length < 6) { spawnHuman(); game.spawnT = rand(0.7, 1.4); }
+      game.crabT -= dt;
+      if (game.crabT <= 0) { spawnCrab(Math.random() < 0.45); game.crabT = rand(6, 10); }
+      game.dolphinT -= dt;
+      if (game.dolphinT <= 0) { spawnDolphin(); game.dolphinT = rand(9, 15); }
+
+      // Humans
+      humans.forEach(h => {
+        if (h.state === "swim" || h.state === "escape") {
+          h.x += h.dir * h.speed * dt;
+          if (h.danceT > 0) h.danceT -= dt;
+        }
+      });
+      humans = humans.filter(h => h.x > -60 && h.x < W + 60);
+
+      // Crabs & dolphins drift through
+      crabs.forEach(c => { c.x += c.dir * c.speed * dt; });
+      crabs = crabs.filter(c => c.x > -50 && c.x < W + 50);
+      dolphins.forEach(d => { d.x += d.dir * d.speed * dt; });
+      dolphins = dolphins.filter(d => d.x > -90 && d.x < W + 90);
+
+      // Net
+      net.cooldown = Math.max(0, net.cooldown - dt);
+      if (net.state === "up") {
+        net.y -= 560 * dt;
+        humans.forEach(h => {
+          if (h.state === "swim" && Math.abs(h.x - net.x) < 54 && Math.abs((surfaceY + h.lane) - net.y) < 46) {
+            h.state = "caught"; h.caughtAt = time; net.caught.push(h); onCaught(h);
+          }
+        });
+        dolphins.forEach(d => checkDolphin(d));
+        if (net.y <= surfaceY + 14) { net.y = surfaceY + 14; net.state = "down"; }
+      } else if (net.state === "down") {
+        net.y += (net.fast ? 950 : 400) * dt;
+        // Caught humans ride in the net, clustered under the rim
+        net.caught.forEach((h, i) => {
+          h.x = net.x + Math.sin(i * 2.4) * 20;
+          h.y = net.y + 22 + Math.floor(i / 2) * 15 - surfaceY;
+        });
+        if (!net.fast) {
+          // Wriggle-free escapes
+          for (let i = net.caught.length - 1; i >= 0; i--) {
+            const h = net.caught[i];
+            const p = (0.10 + (time - h.caughtAt) * 0.05) * dt;
+            if (Math.random() < p) {
+              net.caught.splice(i, 1);
+              h.state = "escape"; h.danceT = 1.15; h.dir = h.x >= net.x ? 1 : -1; h.speed = Math.max(h.speed * 2.1, 95);
+              onEscape(h, false);
+            }
+          }
+          // Heavy load (3+) can snap the line → record scratch, everyone escapes dancing
+          if (net.caught.length >= 3 && Math.random() < 0.22 * dt) {
+            sounds.recordScratch();
+            toast("THE LINE SNAPPED!", "");
+            releaseCaught(true);
+            net.fast = true;
+          }
+        }
+        dolphins.forEach(d => checkDolphin(d));
+        if (net.y >= fish.y - 20) { net.y = fish.y - 20; deliverCatch(); net.state = "idle"; }
+      }
+
+      // Crab pinch: crab crosses the line while the net is out
+      if (net.state !== "idle") {
+        crabs.forEach(c => {
+          if (time - c.pinchedAt > 1.5 && Math.abs(c.x - net.x) < 30 && c.y > net.y && c.y < fish.y) {
+            c.pinchedAt = time;
+            sounds.crabSqueak();        // squeak / honk
+            sounds.recordScratch();     // line goes…
+            toast("CRAB PINCHED THE LINE!", "");
+            if (net.caught.length) releaseCaught(false);
+            net.fast = true; net.state = "down";
+          }
+        });
+      }
+    }
+
+    function checkDolphin(d) {
+      if (d.bonused) return;
+      const dy = d.baseY + Math.sin(time * 3 + d.phase) * 14;
+      if (Math.abs(d.x - net.x) < 58 && Math.abs(dy - net.y) < 42) {
+        d.bonused = true; d.speed *= 1.7;
+        sounds.dolphinChirp();
+        sounds.kaChing();
+        game.score += 150;
+        popup(d.x, dy - 26, "DOLPHIN BONUS +150", "#7df9ff");
+        toast("DOLPHIN BONUS +150!", "blue");
+        updateHud();
+      }
+    }
+
+    // ---------------- Drawing ----------------
+    function rr(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function draw() {
+      // Sky + water
+      const sky = ctx.createLinearGradient(0, 0, 0, surfaceY);
+      sky.addColorStop(0, "#8ed8ff"); sky.addColorStop(1, "#cdeffb");
+      ctx.fillStyle = sky; ctx.fillRect(0, 0, W, surfaceY);
+      ctx.fillStyle = "#ffd23f";
+      ctx.beginPath(); ctx.arc(W - 52, 30, 17, 0, 7); ctx.fill();
+      const sea = ctx.createLinearGradient(0, surfaceY, 0, H);
+      sea.addColorStop(0, "#1b9cd6"); sea.addColorStop(0.55, "#0a6cad"); sea.addColorStop(1, "#064a7d");
+      ctx.fillStyle = sea; ctx.fillRect(0, surfaceY, W, H - surfaceY);
+      // Light rays
+      ctx.save(); ctx.globalAlpha = 0.07; ctx.fillStyle = "#ffffff";
+      for (let i = 0; i < 3; i++) {
+        const rx = ((i * 0.37 + 0.12) * W) + Math.sin(time * 0.3 + i) * 14;
+        ctx.beginPath(); ctx.moveTo(rx, surfaceY); ctx.lineTo(rx + 34, surfaceY);
+        ctx.lineTo(rx + 96, H); ctx.lineTo(rx + 6, H); ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+      // Surface foam
+      ctx.strokeStyle = "rgba(255,255,255,.85)"; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (let x = 0; x <= W; x += 8) {
+        const y = surfaceY + Math.sin(x * 0.05 + time * 2.4) * 2.4;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      // Bubbles
+      ctx.fillStyle = "rgba(255,255,255,.4)";
+      bubbles.forEach(b => { ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 7); ctx.fill(); });
+      // Seabed + seaweed
+      ctx.fillStyle = "#d9b878"; ctx.fillRect(0, seabedY + 14, W, H - seabedY);
+      ctx.fillStyle = "#c8a75e"; ctx.fillRect(0, seabedY + 14, W, 4);
+      ctx.strokeStyle = "#2fae5f"; ctx.lineWidth = 4; ctx.lineCap = "round";
+      weeds.forEach(wd => {
+        ctx.beginPath(); ctx.moveTo(wd.x, seabedY + 16);
+        ctx.quadraticCurveTo(wd.x + Math.sin(time * 1.4 + wd.phase) * 7, seabedY + 16 - wd.h / 2, wd.x + Math.sin(time * 1.4 + wd.phase) * 11, seabedY + 16 - wd.h);
+        ctx.stroke();
+      });
+
+      humans.forEach(drawHuman);
+      crabs.forEach(drawCrab);
+      dolphins.forEach(drawDolphin);
+      drawNet();
+      drawFish();
+      // Score popups
+      ctx.textAlign = "center"; ctx.font = "700 16px Fredoka, sans-serif";
+      popups.forEach(p => {
+        ctx.globalAlpha = clamp(1.2 - p.t, 0, 1);
+        ctx.fillStyle = p.color;
+        ctx.fillText(p.text, p.x, p.y);
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function drawHuman(h) {
+      const y = h.state === "caught" ? surfaceY + h.y : surfaceY + h.lane;
+      const bob = Math.sin(time * 2.2 + h.wiggle) * 2;
+      ctx.save();
+      ctx.translate(h.x, y + bob);
+      if (h.state === "escape" && h.danceT > 0) {          // the victory dance
+        ctx.rotate(Math.sin(time * 17) * 0.17);
+        ctx.translate(0, -Math.abs(Math.sin(time * 9)) * 5);
+      }
+      if (h.state === "caught") ctx.rotate(Math.sin(time * 13 + h.wiggle) * 0.28);
+      ctx.scale(h.dir, 1);
+      ctx.lineCap = "round";
+      // kicking legs
+      ctx.strokeStyle = h.skin; ctx.lineWidth = 3.4;
+      const kick = Math.sin(time * 11 + h.wiggle) * 4;
+      ctx.beginPath(); ctx.moveTo(-13, 5); ctx.lineTo(-20, 9 + kick); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-13, 5); ctx.lineTo(-20, 9 - kick); ctx.stroke();
+      // body
+      ctx.fillStyle = h.suit; rr(-15, -1, 27, 9, 4.5); ctx.fill();
+      // stroking arm
+      const armA = Math.sin(time * 6 + h.wiggle) * 0.8;
+      ctx.strokeStyle = h.skin; ctx.lineWidth = 3.4;
+      ctx.beginPath(); ctx.moveTo(6, 3); ctx.lineTo(6 + Math.cos(armA) * 10, 3 + Math.sin(armA) * 8 - 3); ctx.stroke();
+      // head + hair
+      ctx.fillStyle = h.skin; ctx.beginPath(); ctx.arc(16, -5, 6.6, 0, 7); ctx.fill();
+      ctx.fillStyle = h.hair; ctx.beginPath(); ctx.arc(16, -7.5, 6.6, Math.PI, 0); ctx.fill();
+      ctx.fillStyle = "#20303c"; ctx.beginPath(); ctx.arc(18.4, -5, 1.1, 0, 7); ctx.fill();
+      // golden swimmer: shiny gold ring + sparkles
+      if (h.golden) {
+        ctx.strokeStyle = "#ffd23f"; ctx.lineWidth = 4.5;
+        ctx.beginPath(); ctx.ellipse(-1, 3, 17, 6.5, 0, 0, 7); ctx.stroke();
+        ctx.fillStyle = "#fff3b0";
+        const tw = Math.sin(time * 7 + h.wiggle) > 0.4;
+        if (tw) { ctx.beginPath(); ctx.arc(24, -14, 2, 0, 7); ctx.arc(-16, -8, 1.5, 0, 7); ctx.fill(); }
+      }
+      ctx.restore();
+    }
+
+    function drawCrab(c) {
+      ctx.save(); ctx.translate(c.x, c.y);
+      const snapOpen = (Math.sin(time * 6 + c.snap) > 0.55) ? 0.5 : 0.12;
+      ctx.fillStyle = "#e8481f";
+      ctx.beginPath(); ctx.ellipse(0, 0, 15, 9.5, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = "#ff6b4a";
+      ctx.beginPath(); ctx.ellipse(0, -2, 11, 6.5, 0, 0, 7); ctx.fill();
+      // eye stalks
+      ctx.strokeStyle = "#b93a1e"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(-4, -7); ctx.lineTo(-5, -13); ctx.moveTo(4, -7); ctx.lineTo(5, -13); ctx.stroke();
+      ctx.fillStyle = "#fff";
+      ctx.beginPath(); ctx.arc(-5, -14, 2.8, 0, 7); ctx.arc(5, -14, 2.8, 0, 7); ctx.fill();
+      ctx.fillStyle = "#20303c";
+      ctx.beginPath(); ctx.arc(-5, -14, 1.3, 0, 7); ctx.arc(5, -14, 1.3, 0, 7); ctx.fill();
+      // claws (they snap!)
+      [-1, 1].forEach(s => {
+        ctx.save(); ctx.translate(s * 16, -3); ctx.rotate(s * snapOpen);
+        ctx.fillStyle = "#e8481f";
+        ctx.beginPath(); ctx.ellipse(s * 4, 0, 6.5, 4.4, s * 0.5, 0, 7); ctx.fill();
+        ctx.restore();
+      });
+      // legs
+      ctx.strokeStyle = "#b93a1e"; ctx.lineWidth = 2.2;
+      [-9, 0, 9].forEach(off => {
+        ctx.beginPath(); ctx.moveTo(off, 6); ctx.lineTo(off - 3, 12); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(off, 6); ctx.lineTo(off + 3, 12); ctx.stroke();
+      });
+      ctx.restore();
+    }
+
+    function drawDolphin(d) {
+      const y = d.baseY + Math.sin(time * 3 + d.phase) * 14;
+      ctx.save(); ctx.translate(d.x, y); ctx.scale(d.dir, 1);
+      ctx.rotate(Math.sin(time * 3 + d.phase) * 0.1);
+      ctx.fillStyle = "#8fb8c9";
+      ctx.beginPath(); ctx.ellipse(0, 0, 30, 10.5, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = "#cfe8f2";
+      ctx.beginPath(); ctx.ellipse(3, 3.5, 24, 6, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = "#7aa8bc";
+      ctx.beginPath(); ctx.moveTo(-4, -8); ctx.quadraticCurveTo(3, -19, 10, -8); ctx.closePath(); ctx.fill(); // dorsal fin
+      ctx.beginPath(); ctx.moveTo(-28, 0); ctx.lineTo(-40, -8); ctx.lineTo(-37, 0); ctx.lineTo(-40, 8); ctx.closePath(); ctx.fill(); // fluke
+      ctx.beginPath(); ctx.ellipse(33, 1.5, 7.5, 3.6, 0, 0, 7); ctx.fill(); // beak
+      ctx.fillStyle = "#20303c"; ctx.beginPath(); ctx.arc(22, -2.5, 1.7, 0, 7); ctx.fill();
+      ctx.restore();
+    }
+
+    function drawNet() {
+      if (net.state === "idle") return;
+      // line from the fish's mouth up to the net
+      ctx.strokeStyle = "rgba(240,248,255,.9)"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(fish.x, fish.y - 12); ctx.lineTo(net.x, net.y); ctx.stroke();
+      // mesh basket
+      ctx.save(); ctx.translate(net.x, net.y);
+      ctx.strokeStyle = "rgba(255,255,255,.92)"; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.ellipse(0, 0, 46, 9, 0, 0, 7); ctx.stroke();
+      ctx.beginPath();
+      for (let i = -3; i <= 3; i++) { ctx.moveTo(i * 13, 2); ctx.lineTo(i * 9, 40); }
+      for (let j = 1; j <= 3; j++) { ctx.moveTo(-46 + j * 5, j * 11); ctx.lineTo(46 - j * 5, j * 11); }
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-46, 0); ctx.quadraticCurveTo(0, 52, 46, 0); ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawFish() {
+      ctx.save(); ctx.translate(fish.x, fish.y + Math.sin(time * 3) * 2.5);
+      ctx.scale(fish.dir, 1);
+      const wag = Math.sin(time * 9) * 0.32;
+      // tail
+      ctx.fillStyle = "#f28c13";
+      ctx.save(); ctx.translate(-22, 0); ctx.rotate(wag);
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-15, -10); ctx.lineTo(-15, 10); ctx.closePath(); ctx.fill();
+      ctx.restore();
+      // body
+      const grad = ctx.createLinearGradient(0, -14, 0, 14);
+      grad.addColorStop(0, "#ffb03a"); grad.addColorStop(1, "#f2760a");
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.ellipse(0, 0, 25, 14.5, 0, 0, 7); ctx.fill();
+      // stripes
+      ctx.fillStyle = "rgba(255,255,255,.92)";
+      ctx.beginPath(); ctx.ellipse(-6, 0, 4.6, 13.4, 0.12, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(8, 0, 3.6, 12.6, 0.12, 0, 7); ctx.fill();
+      // fin
+      ctx.fillStyle = "#f28c13";
+      ctx.beginPath(); ctx.moveTo(-4, -12); ctx.quadraticCurveTo(3, -21, 10, -12); ctx.closePath(); ctx.fill();
+      // eye + cheeky grin
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(13, -4, 5.2, 0, 7); ctx.fill();
+      ctx.fillStyle = "#20303c"; ctx.beginPath(); ctx.arc(14.6, -4, 2.6, 0, 7); ctx.fill();
+      ctx.strokeStyle = "#8a4a00"; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.arc(17, 2.5, 4.6, 0.25, 1.5); ctx.stroke();
+      ctx.restore();
+    }
+
+    // ---------------- Main loop ----------------
+    let lastTs = 0;
+    function frame(ts) {
+      const dt = Math.min(0.05, (ts - lastTs) / 1000 || 0.016);
+      lastTs = ts;
+      update(dt);
+      draw();
+      requestAnimationFrame(frame);
+    }
+
+    // ---------------- HUD / round control ----------------
+    function updateHud() {
+      hudScore.textContent = game.score;
+      hudCaught.textContent = game.caught;
+      hudCombo.textContent = "×" + game.bestCombo;
+    }
+    function startRound() {
+      game.score = 0; game.caught = 0; game.bestCombo = 0;
+      game.timeLeft = GAME_LEN; game.spawnT = 0.2; game.crabT = 3.5; game.dolphinT = 5;
+      humans = []; crabs = []; dolphins = []; popups = [];
+      net.state = "idle"; net.caught = [];
+      state.playing = true;
+      castBtn.disabled = false;
+      hudTime.classList.remove("low");
+      updateHud();
+      toast("CATCH THE HUMANS!", "blue");
+    }
+    function endGame() {
+      state.playing = false;
+      castBtn.disabled = true;
+      if (net.caught.length) releaseCaught(false);
+      net.state = "idle";
+      sounds.gameOver(); // dun dun dunnn
+      document.getElementById("finalScore").textContent = game.score;
+      document.getElementById("finalCaught").textContent = game.caught;
+      document.getElementById("finalCombo").textContent = "×" + game.bestCombo;
+      document.getElementById("overLine").textContent =
+        game.caught === 0 ? "Not a single human?! The swimmers are still laughing up there." :
+        game.bestCombo >= 3 ? "Legendary netting! Somewhere, an airhorn is still echoing." :
+        "Time's up! The swimmers live to splash another day.";
+      document.getElementById("overScreen").hidden = false;
+    }
+
+    // ---------------- Input: touch + mouse + keyboard, no hover-only actions ----------------
+    let pointerDown = null;
+    canvas.addEventListener("pointerdown", e => {
+      ensureCtx();
+      pointerDown = { x: e.clientX, y: e.clientY, t: performance.now() };
+      setTarget(e);
+    });
+    canvas.addEventListener("pointermove", e => {
+      if (pointerDown) setTarget(e);                    // drag to swim (touch)
+      else if (e.pointerType === "mouse") setTarget(e); // mouse-follow on PC
+    });
+    canvas.addEventListener("pointerup", e => {
+      if (pointerDown) {
+        const moved = Math.hypot(e.clientX - pointerDown.x, e.clientY - pointerDown.y);
+        if (moved < 12 && performance.now() - pointerDown.t < 350) castNet(); // tap = cast
+      }
+      pointerDown = null;
+    });
+    canvas.addEventListener("pointercancel", () => { pointerDown = null; });
+    function setTarget(e) {
+      const r = canvas.getBoundingClientRect();
+      fish.targetX = clamp(e.clientX - r.left, 30, W - 30);
+    }
+    castBtn.addEventListener("pointerdown", e => { e.preventDefault(); ensureCtx(); castNet(); });
+
+    window.addEventListener("keydown", e => {
+      if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space"].includes(e.code)) e.preventDefault();
+      keys[e.code] = true;
+      if (e.code === "Space" || e.code === "ArrowUp") { ensureCtx(); castNet(); }
+    });
+    window.addEventListener("keyup", e => { keys[e.code] = false; });
+    // Stop pull-to-refresh / double-tap zoom gestures inside the game
+    document.addEventListener("touchmove", e => { e.preventDefault(); }, { passive: false });
+    document.addEventListener("gesturestart", e => e.preventDefault());
+    document.addEventListener("dblclick", e => e.preventDefault());
+
+    // ---------------- Audio controls ----------------
+    const muteBtn = document.getElementById("muteBtn");
+    const volSlider = document.getElementById("volSlider");
+    function applyVolume() {
+      if (master) master.gain.value = state.muted ? 0 : state.volume;
+      muteBtn.classList.toggle("is-muted", state.muted);
+      muteBtn.setAttribute("aria-pressed", String(state.muted));
+      muteBtn.setAttribute("aria-label", state.muted ? "Unmute sound" : "Mute sound");
+    }
+    muteBtn.addEventListener("click", () => {
+      state.muted = !state.muted;
+      if (state.muted && "speechSynthesis" in window) speechSynthesis.cancel();
+      applyVolume();
+    });
+    volSlider.addEventListener("input", () => {
+      state.volume = volSlider.value / 100;
+      if (state.volume > 0) state.muted = false;
+      applyVolume();
+    });
+
+    // ---------------- Start / restart (this click unlocks the audio) ----------------
+    function unlockAndStart() {
+      ensureCtx(); // creates + resumes the AudioContext inside the user gesture
+      if ("speechSynthesis" in window) {
+        try { // warm-up whisper so voice lines are allowed to speak later (esp. iOS)
+          const u = new SpeechSynthesisUtterance(" ");
+          u.volume = 0; speechSynthesis.speak(u);
+        } catch (e) { /* ignore */ }
+      }
+      state.started = true;
+      document.getElementById("startScreen").hidden = true;
+      document.getElementById("overScreen").hidden = true;
+      startRound();
+    }
+    document.getElementById("startBtn").addEventListener("click", unlockAndStart);
+    document.getElementById("againBtn").addEventListener("click", unlockAndStart);
+
+    // ---------------- Go ----------------
+    resize();
+    updateHud();
+    requestAnimationFrame(frame);
+    </script>
+  </body>
+</html>
