@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <meta name="color-scheme" content="dark"/>
 <link rel="icon" href="data:,"/>
-<title>Fishy Goes Fishing — Open World</title>
+<title>Fishy Goes Fishing — Open World + Missions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
 <style>
@@ -32,11 +32,40 @@ canvas#game{position:absolute;inset:0;width:100%;height:100%;display:block;touch
 #zoneBanner .zname{font-family:Fredoka,sans-serif;font-size:1.05rem;line-height:1}#zoneBanner .zsub{font-size:.72rem;color:var(--dim);font-weight:800}
 #toast{position:absolute;top:52px;left:50%;transform:translate(-50%,-16px) scale(.9);font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(1.1rem,4.5vw,1.8rem);color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.35);background:linear-gradient(180deg,var(--coral),#e8481f);padding:.3em .9em;border-radius:99px;white-space:nowrap;opacity:0;pointer-events:none;transition:.18s;z-index:6}
 #toast.show{opacity:1;transform:translate(-50%,0) scale(1)}#toast.gold{background:linear-gradient(180deg,#ffd23f,#f59e0b);color:var(--accent-ink);text-shadow:none}#toast.blue{background:linear-gradient(180deg,#38bdf8,#0369a1)}
+/* missions + avatars */
+#missionsBtn{font-family:Fredoka,sans-serif;font-weight:700;font-size:.92rem;color:var(--accent-ink);background:linear-gradient(180deg,#ffd23f,var(--accent));border:none;border-radius:99px;padding:10px 16px;cursor:pointer;box-shadow:0 3px 0 #b97e04;white-space:nowrap;min-height:44px}
+#missionsBtn:active{transform:translateY(2px)}
+#missionTracker{position:absolute;top:64px;left:10px;z-index:4;background:rgba(3,25,44,.82);border:1px solid #ffd23f;border-radius:99px;padding:6px 12px;font-size:.78rem;font-weight:900;pointer-events:none;display:flex;gap:10px;align-items:center}
+#missionTracker .star{color:#ffd23f}
+#missionPanel{position:absolute;inset:0;z-index:12;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(2,18,32,.72)}
+#missionPanel[hidden]{display:none}
+.mission-card{background:#062a44;border:1px solid var(--edge);border-radius:18px;max-width:560px;width:100%;max-height:92%;overflow:auto;padding:18px;text-align:left;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.mission-card h2{font-family:Fredoka,sans-serif;margin:0 0 2px;font-size:1.5rem}.mission-card h2 span{color:var(--accent)}
+.mission-card p.sub{margin:0 0 12px;color:var(--dim);font-weight:700;font-size:.88rem}
+.mission-row{border:1px solid var(--edge);border-radius:14px;padding:10px 12px;margin-bottom:8px;background:rgba(255,255,255,.05)}
+.mission-row.done{border-color:#ffd23f;background:rgba(255,183,3,.12)}
+.mission-row .m-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.mission-row .m-title{font-family:Fredoka,sans-serif;font-weight:700}.mission-row .m-count{font-weight:900;color:var(--accent);white-space:nowrap}
+.mission-row .m-desc{font-size:.82rem;color:var(--dim);font-weight:700;margin:2px 0 6px}
+.bar{height:10px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),#ffd23f);border-radius:99px;transition:width .3s}
+.mission-row .m-reward{font-size:.8rem;font-weight:900;margin-top:6px}.mission-row .m-reward.unlocked{color:#ffd23f}
+.avatar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin:10px 0}
+.avatar-card{border:2px solid var(--edge);border-radius:14px;padding:10px 8px;text-align:center;background:rgba(255,255,255,.05);cursor:pointer;color:#fff;font-family:Nunito,sans-serif}
+.avatar-card .a-emoji{font-size:1.9rem;line-height:1}.avatar-card .a-name{font-family:Fredoka,sans-serif;font-weight:700;font-size:.86rem;margin-top:4px}.avatar-card .a-state{font-size:.7rem;font-weight:900;color:var(--dim);margin-top:2px}
+.avatar-card.equipped{border-color:#ffd23f;background:rgba(255,183,3,.16)}.avatar-card.equipped .a-state{color:#ffd23f}
+.avatar-card.locked{opacity:.62;cursor:not-allowed}
+.avatar-card:disabled{cursor:not-allowed}
+#closeMissions{width:100%;margin-top:4px}
+.unlock-banner{background:linear-gradient(180deg,#ffd23f,#f59e0b);color:#3a2400;border-radius:12px;padding:10px 12px;font-weight:900;text-align:center;margin-bottom:10px}
+.unlock-banner[hidden]{display:none}
 /* joystick */
 #stick{position:absolute;left:18px;bottom:18px;width:118px;height:118px;border-radius:50%;background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.28);z-index:4;display:none}
 #stickKnob{position:absolute;left:50%;top:50%;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.88);transform:translate(-50%,-50%);box-shadow:0 4px 14px rgba(0,0,0,.35)}
 #castBtn2{position:absolute;right:18px;bottom:22px;z-index:4;font-family:Fredoka,sans-serif;font-weight:700;font-size:1.05rem;color:#fff;background:linear-gradient(180deg,#ff8266,var(--coral));border:none;border-radius:50%;width:92px;height:92px;cursor:pointer;box-shadow:0 6px 0 #b93a1e,0 12px 24px rgba(0,0,0,.4)}#castBtn2:active{transform:translateY(4px)}#castBtn2:disabled{filter:grayscale(.6) brightness(.7)}
-.overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;gap:10px;background:radial-gradient(90% 70% at 50% 30%,rgba(10,90,140,.90),rgba(2,24,43,.96))}
+.overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:20px;gap:10px;background:radial-gradient(90% 70% at 50% 30%,rgba(10,90,140,.90),rgba(2,24,43,.96));overflow-y:auto;-webkit-overflow-scrolling:touch}
+.overlay>*{flex-shrink:0}
+.overlay::before,.overlay::after{content:"";flex:1 0 0}
+#avatarGridStart{grid-template-columns:repeat(4,1fr);gap:6px}
+#avatarGridStart .avatar-card{padding:7px 4px}#avatarGridStart .a-emoji{font-size:1.35rem}#avatarGridStart .a-name{font-size:.72rem}#avatarGridStart .a-state{font-size:.6rem}
 .overlay[hidden]{display:none}.overlay h1{font-family:Fredoka,sans-serif;font-weight:700;font-size:clamp(2rem,8vw,3.4rem);line-height:1.02;margin:0}.overlay h1 .hl{color:var(--accent)}.overlay p{margin:0;max-width:52ch;color:var(--dim);font-weight:700}
 .howto{display:grid;gap:6px;margin:6px 0;text-align:left;font-weight:800;font-size:.92rem}.howto b{color:var(--accent);font-family:Fredoka,sans-serif}
 kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px solid rgba(255,255,255,.35);border-bottom-width:3px;border-radius:6px;padding:.05em .45em}
@@ -56,7 +85,9 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 <div class="stat"><span class="label">Caught</span><span class="value" id="hudCaught">0</span></div>
 <div class="stat"><span class="label">Best combo</span><span class="value" id="hudCombo">×0</span></div>
 <div class="stat"><span class="label">Place</span><span class="value" id="hudZone">Beach</span></div>
+<div class="stat"><span class="label">★ Special</span><span class="value" id="hudSpecial" style="color:#ffd23f">0 / 20</span></div>
 <div class="spacer"></div>
+<button id="missionsBtn" type="button">🎯 Missions</button>
 <div class="audio-controls"><input type="range" id="volSlider" min="0" max="100" value="80" aria-label="Volume"/>
 <button id="muteBtn" type="button" aria-label="Mute sound" aria-pressed="false"><svg class="icon-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9.4 9.4 0 0 1 0 13"/></svg><svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4V5z" fill="currentColor" stroke="none"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg></button></div>
 </header>
@@ -64,6 +95,18 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 <div id="stage">
 <canvas id="game"></canvas>
 <div id="zoneBanner"><div class="zname" id="zoneName">🏖️ Sunny Beach</div><div class="zsub" id="zoneSub">Swimmers everywhere — easy catches</div></div>
+<div id="missionTracker"><span><span class="star">★ SPECIAL</span> <span id="trackerSpecial">0 / 20</span></span><span id="trackerNext">→ Golden Fishy</span></div>
+<div id="missionPanel" hidden>
+<div class="mission-card">
+<div class="unlock-banner" id="unlockBanner" hidden></div>
+<h2>🎯 Missions <span>&amp; Avatars</span></h2>
+<p class="sub">Missions carry over between rounds while you play. Finish one to unlock a new Fishy avatar — tap an unlocked avatar to wear it right away. Special humans are the glowing ★ GOLDEN ones — they love the River Delta.</p>
+<div id="missionList"></div>
+<h2 style="font-size:1.15rem;margin-top:14px">Choose your <span>Fishy</span></h2>
+<div class="avatar-grid" id="avatarGrid"></div>
+<button class="big-btn" id="closeMissions" type="button">Back to the hunt →</button>
+</div>
+</div>
 <div id="ioPanels">
 <div class="panel"><h3>🏆 Leaderboard</h3><ol id="leaderList"></ol></div>
 <div class="panel"><h3>🗺️ World Map</h3><canvas id="minimap" width="296" height="192"></canvas></div>
@@ -80,8 +123,10 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 <span><b>Cast net</b> — <kbd>Space</kbd>, tap, or the big CAST NET button — get close first!</span>
 <span><b>Explore</b> — Sunny Beach · Wooden Pier · Splash Pool · River Delta — each place has its own humans</span>
 <span><b>Combo</b> — net 3+ humans in one cast for the airhorn bonus</span>
+<span><b>🎯 Missions</b> — hunt <b>20 ★ Special (golden) humans</b> to unlock the <b>Golden Fishy</b> avatar, plus 3 more missions &amp; avatars — tap 🎯 Missions anytime</span>
 <span><b>Beware</b> — crabs pinch, heavy nets snap, humans wriggle free and dance away</span>
 </div>
+<div style="width:100%;max-width:520px;text-align:left"><div style="font-family:Fredoka,sans-serif;font-weight:700;margin-bottom:6px">Your Fishy — pick an unlocked avatar:</div><div class="avatar-grid" id="avatarGridStart"></div></div>
 <button class="big-btn" id="startBtn" type="button">Click to Start</button>
 <p class="tiny-note">Sound on — every meme effect is synthesized live in code, no audio files.</p>
 </div>
@@ -94,12 +139,15 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 <div class="stat"><span class="label">Humans caught</span><span class="value" id="finalCaught">0</span></div>
 <div class="stat"><span class="label">Best combo</span><span class="value" id="finalCombo">×0</span></div>
 <div class="stat"><span class="label">Places visited</span><span class="value" id="finalPlaces">1 / 4</span></div>
+<div class="stat"><span class="label">★ Special (all rounds)</span><span class="value" id="finalSpecial">0 / 20</span></div>
 </div>
+<p id="overMissions" style="font-size:.9rem"></p>
 <button class="big-btn" id="againBtn" type="button">Play Again</button>
+<button class="big-btn" id="overMissionsBtn" type="button" style="background:rgba(255,255,255,.12);color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.35);font-size:1rem;padding:.5em 1.2em">🎯 View Missions &amp; Avatars</button>
 </div>
 </div>
 
-<footer id="controls"><div id="hint"><b>Open world:</b> walk Fishy (he has legs now!) between the Beach, Pier, Pool &amp; River. Get close to humans, then cast. <b>PC:</b> WASD + Space &nbsp;•&nbsp; <b>Phone:</b> joystick + CAST NET</div></footer>
+<footer id="controls"><div id="hint"><b>Open world + missions:</b> hunt ★ Special golden humans (best in the River) — 20 unlocks Golden Fishy! Tap <b>🎯 Missions</b> for all 4 missions &amp; avatars. <b>PC:</b> WASD + Space &nbsp;•&nbsp; <b>Phone:</b> joystick + CAST NET</div></footer>
 </div>
 
 <script>
@@ -145,6 +193,7 @@ const sounds={
   crabSqueak(){tone({type:"sine",from:950,to:1750,dur:.06,vol:.32});tone({type:"sine",from:1100,to:1900,dur:.06,vol:.32,delay:.09});tone({type:"square",from:520,to:470,dur:.07,vol:.14,delay:.02});},
   dolphinChirp(){tone({type:"sine",from:2400,to:3950,dur:.07,vol:.24});tone({type:"sine",from:2650,to:4200,dur:.07,vol:.24,delay:.09});tone({type:"sine",from:2200,to:3600,dur:.10,vol:.20,delay:.18});},
   gameOver(){[146.83,138.59,130.81].forEach((f,i)=>{const last=i===2,dur=last?1.5:.36,delay=i*.4;tone({type:"sawtooth",from:f,to:f*.985,dur,vol:.34,delay,attack:.01});tone({type:"sine",from:f/2,to:f/2,dur,vol:.30,delay,attack:.01});});},
+  fanfare(){[523.25,659.25,783.99,1046.5].forEach((f,i)=>tone({type:"triangle",from:f,dur:.22,vol:.32,delay:i*.11}));tone({type:"sine",from:1567.98,dur:.5,vol:.16,delay:.44});},
   step(){tone({type:"sine",from:rand(180,220),to:120,dur:.05,vol:.06});}
 };
 
@@ -167,6 +216,23 @@ const cam={x:0,y:0};
 const game={score:0,caught:0,bestCombo:0,timeLeft:GAME_LEN,lastVoiceAt:-9,lastTromboneAt:-9,visited:new Set(["beach"]),botT:0};
 const bots=[{name:"SharkySam",score:120},{name:"NetNina",score:80},{name:"SplashKing",score:40}];
 const fish={x:400,y:450,vx:0,vy:0,dir:1,walk:0,moving:false,legSkin:"#f2c79b"};
+/* ================= MISSIONS & AVATARS =================
+   Progress lives in `profile` and carries over between rounds
+   for the whole play session. Special humans = the glowing
+   golden ones (h.golden). */
+const AVATARS={
+ classic:{name:"Classic Fishy",emoji:"🐠",top:"#ffb03a",bottom:"#f2760a",tail:"#f28c13",shorts:"#2456a6",crown:false,glow:null},
+ golden:{name:"Golden Fishy",emoji:"👑",top:"#ffe066",bottom:"#ffb703",tail:"#f5b301",shorts:"#3a2400",crown:true,glow:"rgba(255,210,63,.55)"},
+ shark:{name:"Shark Fishy",emoji:"🦈",top:"#cfe8f2",bottom:"#457b9d",tail:"#457b9d",shorts:"#22303c",crown:false,glow:null},
+ rainbow:{name:"Rainbow Fishy",emoji:"🌈",top:"#ff6b9d",bottom:"#38bdf8",tail:"#7bed6a",shorts:"#7c3aed",crown:false,glow:"rgba(199,125,255,.5)"}
+};
+const profile={totalCaught:0,specialCaught:0,bestComboEver:0,placesEver:new Set(["beach"]),unlocked:new Set(["classic"]),currentAvatar:"classic",done:new Set()};
+const MISSIONS=[
+ {id:"special20",icon:"⭐",title:"Golden Hunter",desc:"Hunt 20 SPECIAL humans — the glowing golden ones. They appear most often in the River Delta.",target:20,get:()=>profile.specialCaught,reward:"golden",rewardText:"Unlocks 👑 Golden Fishy avatar"},
+ {id:"total50",icon:"🎣",title:"Human Hunter",desc:"Catch 50 humans in total, across all rounds and all places.",target:50,get:()=>profile.totalCaught,reward:"shark",rewardText:"Unlocks 🦈 Shark Fishy avatar"},
+ {id:"explorer4",icon:"🗺️",title:"World Explorer",desc:"Visit all 4 places: Sunny Beach, Wooden Pier, Splash Pool and River Delta.",target:4,get:()=>profile.placesEver.size,reward:null,rewardText:"Reward: +1000 bonus points when completed"},
+ {id:"combo5",icon:"📣",title:"Combo King",desc:"Net 5 or more humans in a single cast. Crowded spots like the Splash Pool are your friend.",target:5,get:()=>profile.bestComboEver,reward:"rainbow",rewardText:"Unlocks 🌈 Rainbow Fishy avatar"}
+];
 const net={active:false,t:0,x:0,y:0,r:0,caught:[]};
 let humans=[],crabs=[],dolphins=[],popups=[],bubbles=[];
 const keys={}; let joy={active:false,dx:0,dy:0,id:null}; let mouseTarget=null;
@@ -176,18 +242,22 @@ const KIND=["Swimmer","Sunbather","Angler","Camper","Pool partier","Picnicker"];
 function resize(){const r=stage.getBoundingClientRect();const dpr=Math.min(devicePixelRatio||1,2);W=Math.max(280,r.width);H=Math.max(300,r.height);canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
 addEventListener("resize",resize);addEventListener("orientationchange",()=>setTimeout(resize,60));
 
-function spawnHuman(zone){zone=zone||pick(ZONES);const golden=zone.id==="river"?Math.random()<.22:Math.random()<.10;humans.push({x:clamp(zone.x+rand(70,zone.w-70),40,WORLD_W-40),y:clamp(zone.y+rand(80,zone.h-80),50,WORLD_H-40),zone:zone.id,kind:pick(KIND),dir:Math.random()<.5?1:-1,speed:rand(22,52),skin:pick(SKIN),hair:pick(HAIR),suit:pick(SUIT),golden,state:"wander",wiggle:rand(0,9),danceT:0,caughtAt:0,tx:0,ty:0,retarget:0});const h=humans[humans.length-1];h.tx=h.x;h.ty=h.y;}
+function spawnHuman(zone,forceSpecial){zone=zone||pick(ZONES);const golden=forceSpecial?true:(zone.id==="river"?Math.random()<.35:Math.random()<.18);humans.push({x:clamp(zone.x+rand(70,zone.w-70),40,WORLD_W-40),y:clamp(zone.y+rand(80,zone.h-80),50,WORLD_H-40),zone:zone.id,kind:pick(KIND),dir:Math.random()<.5?1:-1,speed:rand(22,52),skin:pick(SKIN),hair:pick(HAIR),suit:pick(SUIT),golden,state:"wander",wiggle:rand(0,9),danceT:0,caughtAt:0,tx:0,ty:0,retarget:0});const h=humans[humans.length-1];h.tx=h.x;h.ty=h.y;}
 function spawnCrab(){const z=pick(ZONES);crabs.push({x:z.x+rand(60,z.w-60),y:z.y+rand(60,z.h-60),dir:1,speed:rand(18,34),snap:rand(0,9),pinchedAt:-9,tx:0,ty:0,retarget:0});}
 function spawnDolphin(){const z=pick(ZONES);dolphins.push({x:z.x+rand(100,z.w-100),y:z.y+rand(100,z.h-100),dir:Math.random()<.5?1:-1,speed:rand(70,110),phase:rand(0,9),bonused:false,tx:0,ty:0,retarget:0});}
-function seedWorld(){humans=[];crabs=[];dolphins=[];ZONES.forEach(z=>{const n=z.id==="pool"?7:5;for(let i=0;i<n;i++)spawnHuman(z);});for(let i=0;i<6;i++)spawnCrab();for(let i=0;i<3;i++)spawnDolphin();for(let i=0;i<40;i++)bubbles.push({x:rand(0,WORLD_W),y:rand(0,WORLD_H),r:rand(1.5,4)});}
+function seedWorld(){humans=[];crabs=[];dolphins=[];bubbles=[];ZONES.forEach(z=>{const n=z.id==="pool"?7:5;for(let i=0;i<n;i++)spawnHuman(z);});spawnHuman(ZONES[3],true);spawnHuman(ZONES[3],true);spawnHuman(ZONES[0],true);for(let i=0;i<6;i++)spawnCrab();for(let i=0;i<3;i++)spawnDolphin();for(let i=0;i<40;i++)bubbles.push({x:rand(0,WORLD_W),y:rand(0,WORLD_H),r:rand(1.5,4)});}
 
 let toastTimer=null;function toast(t,k){toastEl.textContent=t;toastEl.className="show"+(k?" "+k:"");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.className="",1500);}
 function popup(x,y,t,c){popups.push({x,y,text:t,color:c||"#fff",t:0});}
-function onCaught(h){if(Math.random()<.5)sounds.boing();else sounds.bonk();if(time-game.lastVoiceAt>.9){sounds.voiceCaught();game.lastVoiceAt=time;}popup(h.x,h.y-30,h.golden?"GOLDEN!":"GOTCHA!",h.golden?"#ffd23f":"#fff");}
+function onCaught(h){if(Math.random()<.5)sounds.boing();else sounds.bonk();if(time-game.lastVoiceAt>.9){sounds.voiceCaught();game.lastVoiceAt=time;}popup(h.x,h.y-30,h.golden?"★ SPECIAL!":"GOTCHA!",h.golden?"#ffd23f":"#fff");}
 function onEscape(h,snapped){if(time-game.lastTromboneAt>2.4){sounds.sadTrombone();game.lastTromboneAt=time;}if(Math.random()<.55)sounds.evilLaugh();if(time-game.lastVoiceAt>.9){sounds.voiceEscape();game.lastVoiceAt=time;}popup(h.x,h.y-32,snapped?"IT SNAPPED!":"WRIGGLED FREE!","#ffb3c1");}
 
 function castNet(){if(!state.playing||net.active)return;net.active=true;net.t=0;net.x=fish.x+fish.dir*36;net.y=fish.y+6;net.r=0;net.caught=[];}
-function deliverCatch(){const n=net.caught.length;if(!n)return;let pts=0,gold=false;net.caught.forEach(h=>{pts+=h.golden?250:100;if(h.golden)gold=true;});game.caught+=n;game.bestCombo=Math.max(game.bestCombo,n);if(n>=3){pts+=(n-2)*75;sounds.airhorn();sounds.kaChing();toast("AIRHORN COMBO ×"+n+"!","gold");}else if(gold||n===2){sounds.kaChing();if(gold)toast("GOLDEN HUMAN +250!","gold");}game.score+=pts;popup(fish.x,fish.y-56,"+"+pts,"#ffd23f");humans=humans.filter(h=>h.state!=="caught");net.caught.forEach(()=>spawnHuman());net.caught=[];updateHud();updateLeader();}
+function deliverCatch(){const n=net.caught.length;if(!n)return;let pts=0,gold=false,specials=0;net.caught.forEach(h=>{pts+=h.golden?250:100;if(h.golden){gold=true;specials++;}});game.caught+=n;game.bestCombo=Math.max(game.bestCombo,n);profile.totalCaught+=n;profile.specialCaught+=specials;profile.bestComboEver=Math.max(profile.bestComboEver,n);if(n>=3){pts+=(n-2)*75;sounds.airhorn();sounds.kaChing();toast("AIRHORN COMBO ×"+n+"!","gold");}else if(gold||n===2){sounds.kaChing();if(gold)toast("★ SPECIAL HUMAN +250! ("+profile.specialCaught+" / 20)","gold");}game.score+=pts;popup(fish.x,fish.y-56,"+"+pts,"#ffd23f");humans=humans.filter(h=>h.state!=="caught");net.caught.forEach(()=>spawnHuman());net.caught=[];updateHud();updateLeader();checkMissions();renderMissions();}
+function checkMissions(){MISSIONS.forEach(m=>{if(profile.done.has(m.id))return;if(m.get()>=m.target){profile.done.add(m.id);let msg="";if(m.reward){profile.unlocked.add(m.reward);profile.currentAvatar=m.reward;msg="🎉 MISSION COMPLETE: "+m.title+"! New avatar unlocked: "+AVATARS[m.reward].emoji+" "+AVATARS[m.reward].name+" — now wearing it!";}else{game.score+=1000;msg="🎉 MISSION COMPLETE: "+m.title+"! +1000 bonus points!";updateHud();}sounds.fanfare();sounds.kaChing();const b=document.getElementById("unlockBanner");b.textContent=msg;b.hidden=false;toast(m.title.toUpperCase()+" COMPLETE! 🎉","gold");}});renderMissions();}
+function renderMissions(){const hudS=document.getElementById("hudSpecial");if(hudS)hudS.textContent=profile.specialCaught+" / 20";const tr=document.getElementById("trackerSpecial");if(tr)tr.textContent=profile.specialCaught+" / 20";const tn=document.getElementById("trackerNext");if(tn)tn.textContent=profile.done.has("special20")?"Golden Fishy unlocked! 👑":"→ Golden Fishy";const list=document.getElementById("missionList");if(list){list.innerHTML=MISSIONS.map(m=>{const cur=Math.min(m.get(),m.target),done=profile.done.has(m.id),pct=Math.round(cur/m.target*100);return `<div class="mission-row ${done?"done":""}"><div class="m-top"><span class="m-title">${m.icon} ${m.title} ${done?"✅":""}</span><span class="m-count">${cur} / ${m.target}</span></div><div class="m-desc">${m.desc}</div><div class="bar"><i style="width:${pct}%"></i></div><div class="m-reward ${done?"unlocked":""}">${done?"✅ "+m.rewardText:m.rewardText}</div></div>`;}).join("");}
+ const gridHTML=Object.entries(AVATARS).map(([id,a])=>{const un=profile.unlocked.has(id),eq=profile.currentAvatar===id;const lock=MISSIONS.find(m=>m.reward===id);return `<button type="button" class="avatar-card ${eq?"equipped":""} ${un?"":"locked"}" data-avatar="${id}" ${un?"":"disabled"}><div class="a-emoji">${un?a.emoji:"🔒"}</div><div class="a-name">${a.name}</div><div class="a-state">${eq?"★ WEARING":un?"Tap to wear":(lock?lock.title+" mission":"Locked")}</div></button>`;}).join("");
+ ["avatarGrid","avatarGridStart"].forEach(gid=>{const g=document.getElementById(gid);if(g){g.innerHTML=gridHTML;g.querySelectorAll("[data-avatar]").forEach(btn=>btn.addEventListener("click",()=>{const id=btn.getAttribute("data-avatar");if(profile.unlocked.has(id)){profile.currentAvatar=id;sounds.kaChing();toast("NOW WEARING: "+AVATARS[id].name.toUpperCase()+"!","gold");renderMissions();}}));}});}
 function releaseCaught(snapped){net.caught.forEach(h=>{h.state="escape";h.danceT=1.15;h.speed=110;if(snapped)onEscape(h,true);});net.caught=[];}
 
 function update(dt){time+=dt;popups.forEach(p=>{p.t+=dt;p.y-=30*dt;});popups=popups.filter(p=>p.t<1.1);if(!state.playing)return;
@@ -202,7 +272,7 @@ function update(dt){time+=dt;popups.forEach(p=>{p.t+=dt;p.y-=30*dt;});popups=pop
  if(mx)fish.dir=mx>0?1:-1; if(fish.moving){fish.walk+=dt*11; if(Math.floor(fish.walk)%2===0&&Math.random()<.25)sounds.step();}
  cam.x=clamp(fish.x-W/2,0,Math.max(0,WORLD_W-W)); cam.y=clamp(fish.y-H/2,0,Math.max(0,WORLD_H-H));
  // zone
- const z=zoneAt(fish.x,fish.y); if(hudZone.textContent!==z.name){hudZone.textContent=z.name;document.getElementById("zoneName").textContent=z.emoji+" "+z.name;document.getElementById("zoneSub").textContent=z.sub;if(!game.visited.has(z.id)){game.visited.add(z.id);toast("NEW PLACE: "+z.name.toUpperCase()+"!","blue");} }
+ const z=zoneAt(fish.x,fish.y); if(hudZone.textContent!==z.name){hudZone.textContent=z.name;document.getElementById("zoneName").textContent=z.emoji+" "+z.name;document.getElementById("zoneSub").textContent=z.sub;if(!game.visited.has(z.id)){game.visited.add(z.id);toast("NEW PLACE: "+z.name.toUpperCase()+"!","blue");}if(!profile.placesEver.has(z.id)){profile.placesEver.add(z.id);checkMissions();} }
  // bots creep up like an .io lobby
  game.botT-=dt; if(game.botT<=0){pick(bots).score+=pick([50,100,100,150]);game.botT=rand(3,6);updateLeader();}
  // wander helper
@@ -225,7 +295,7 @@ function update(dt){time+=dt;popups.forEach(p=>{p.t+=dt;p.y-=30*dt;});popups=pop
  drawMini();
 }
 function updateLeader(){const rows=[{name:"You (Fishy)",score:game.score,me:true},...bots].sort((a,b)=>b.score-a.score);document.getElementById("leaderList").innerHTML=rows.map((r,i)=>`<li class="${r.me?"me":""}"><span>${i+1}. ${r.name}</span><b>${r.score}</b></li>`).join("");}
-function drawMini(){const sx=mini.width/WORLD_W,sy=mini.height/WORLD_H;mctx.clearRect(0,0,mini.width,mini.height);ZONES.forEach(z=>{mctx.fillStyle=z.ground;mctx.fillRect(z.x*sx,z.y*sy,z.w*sx,z.h*sy);mctx.fillStyle="rgba(255,255,255,.25)";mctx.fillRect(z.x*sx,z.y*sy+z.h*sy*.55,z.w*sx,z.h*sy*.45);});mctx.fillStyle="#fff";humans.forEach(h=>mctx.fillRect(h.x*sx-2,h.y*sy-2,4,4));mctx.fillStyle="#ffb703";mctx.beginPath();mctx.arc(fish.x*sx,fish.y*sy,6,0,7);mctx.fill();mctx.strokeStyle="#fff";mctx.strokeRect(cam.x*sx,cam.y*sy,W*sx,H*sy);}
+function drawMini(){const sx=mini.width/WORLD_W,sy=mini.height/WORLD_H;mctx.clearRect(0,0,mini.width,mini.height);ZONES.forEach(z=>{mctx.fillStyle=z.ground;mctx.fillRect(z.x*sx,z.y*sy,z.w*sx,z.h*sy);mctx.fillStyle="rgba(255,255,255,.25)";mctx.fillRect(z.x*sx,z.y*sy+z.h*sy*.55,z.w*sx,z.h*sy*.45);});humans.forEach(h=>{mctx.fillStyle=h.golden?"#ffd23f":"#fff";mctx.fillRect(h.x*sx-2,h.y*sy-2,4,4);});mctx.fillStyle="#ffb703";mctx.beginPath();mctx.arc(fish.x*sx,fish.y*sy,6,0,7);mctx.fill();mctx.strokeStyle="#fff";mctx.strokeRect(cam.x*sx,cam.y*sy,W*sx,H*sy);}
 
 /* ================= DRAWING ================= */
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
@@ -258,24 +328,26 @@ function drawHuman(h){ctx.save();ctx.translate(h.x,h.y);const depth=.75+ (h.y%30
  ctx.fillStyle="#20303c";ctx.beginPath();ctx.arc(3,-17,1.3,0,7);ctx.fill();
  if(h.golden){ctx.strokeStyle="#ffd23f";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(0,2,15,22,0,0,7);ctx.stroke();}
  ctx.restore();
- if(h.golden){ctx.fillStyle="#7a5200";ctx.font="800 11px Nunito";ctx.textAlign="center";ctx.fillText("★ GOLDEN",h.x,h.y-48);}
+ if(h.golden){ctx.fillStyle="#7a5200";ctx.font="800 11px Nunito";ctx.textAlign="center";ctx.fillText("★ SPECIAL",h.x,h.y-48);}
 }
 function drawCrab(c){ctx.save();ctx.translate(c.x,c.y);ctx.fillStyle="rgba(0,0,0,.2)";ctx.beginPath();ctx.ellipse(0,12,16,4,0,0,7);ctx.fill();const s=Math.sin(time*6+c.snap)>.55?.5:.12;ctx.fillStyle="#e8481f";ctx.beginPath();ctx.ellipse(0,0,15,9.5,0,0,7);ctx.fill();ctx.fillStyle="#ff6b4a";ctx.beginPath();ctx.ellipse(0,-2,11,6.5,0,0,7);ctx.fill();ctx.strokeStyle="#b93a1e";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-4,-7);ctx.lineTo(-5,-13);ctx.moveTo(4,-7);ctx.lineTo(5,-13);ctx.stroke();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(-5,-14,2.8,0,7);ctx.arc(5,-14,2.8,0,7);ctx.fill();ctx.fillStyle="#20303c";ctx.beginPath();ctx.arc(-5,-14,1.3,0,7);ctx.arc(5,-14,1.3,0,7);ctx.fill();[-1,1].forEach(sg=>{ctx.save();ctx.translate(sg*16,-3);ctx.rotate(sg*s);ctx.fillStyle="#e8481f";ctx.beginPath();ctx.ellipse(sg*4,0,6.5,4.4,sg*.5,0,7);ctx.fill();ctx.restore();});ctx.restore();}
 function drawDolphin(d){ctx.save();ctx.translate(d.x,d.y+Math.sin(time*3+d.phase)*6);ctx.scale(d.dir,1);ctx.fillStyle="#8fb8c9";ctx.beginPath();ctx.ellipse(0,0,30,10.5,0,0,7);ctx.fill();ctx.fillStyle="#cfe8f2";ctx.beginPath();ctx.ellipse(3,3.5,24,6,0,0,7);ctx.fill();ctx.fillStyle="#7aa8bc";ctx.beginPath();ctx.moveTo(-4,-8);ctx.quadraticCurveTo(3,-19,10,-8);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(-28,0);ctx.lineTo(-40,-8);ctx.lineTo(-37,0);ctx.lineTo(-40,8);ctx.closePath();ctx.fill();ctx.beginPath();ctx.ellipse(33,1.5,7.5,3.6,0,0,7);ctx.fill();ctx.fillStyle="#20303c";ctx.beginPath();ctx.arc(22,-2.5,1.7,0,7);ctx.fill();ctx.restore();}
 /* FISHY — fish body on HUMAN LEGS */
-function drawFish(){ctx.save();ctx.translate(fish.x,fish.y);ctx.fillStyle="rgba(0,0,0,.25)";ctx.beginPath();ctx.ellipse(0,30,24,6,0,0,7);ctx.fill();
+function drawFish(){const av=AVATARS[profile.currentAvatar]||AVATARS.classic;ctx.save();ctx.translate(fish.x,fish.y);if(av.glow){ctx.fillStyle=av.glow;ctx.beginPath();ctx.ellipse(0,2,38,30,0,0,7);ctx.fill();}ctx.fillStyle="rgba(0,0,0,.25)";ctx.beginPath();ctx.ellipse(0,30,24,6,0,0,7);ctx.fill();
  const step=fish.moving?Math.sin(fish.walk)*11:0, lift=fish.moving?Math.abs(Math.cos(fish.walk))*4:0;
  // human legs: skin, shorts, shoes — they stride when Fishy walks
  ctx.strokeStyle=fish.legSkin;ctx.lineWidth=7;ctx.lineCap="round";
  ctx.beginPath();ctx.moveTo(-6,10);ctx.lineTo(-6+step,28-lift);ctx.stroke();
  ctx.beginPath();ctx.moveTo(7,10);ctx.lineTo(7-step,28-(fish.moving?Math.abs(Math.sin(fish.walk))*4:0));ctx.stroke();
  ctx.fillStyle="#222";ctx.beginPath();ctx.ellipse(-6+step+(fish.dir>0?3:-3),29-lift,6,3.4,0,0,7);ctx.ellipse(7-step+(fish.dir>0?3:-3),29-(fish.moving?Math.abs(Math.sin(fish.walk))*4:0),6,3.4,0,0,7);ctx.fill(); // shoes
- ctx.fillStyle="#2456a6";rr(-13,2,27,11,4);ctx.fill(); // shorts the legs come out of
+ ctx.fillStyle=av.shorts;rr(-13,2,27,11,4);ctx.fill(); // shorts the legs come out of
  ctx.scale(fish.dir,1);ctx.translate(0,-8+Math.sin(time*3)*1.5);
- const wag=Math.sin(time*9)*.3;ctx.fillStyle="#f28c13";ctx.save();ctx.translate(-22,0);ctx.rotate(wag);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-15,-10);ctx.lineTo(-15,10);ctx.closePath();ctx.fill();ctx.restore();
- const g=ctx.createLinearGradient(0,-14,0,14);g.addColorStop(0,"#ffb03a");g.addColorStop(1,"#f2760a");ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(0,0,25,14.5,0,0,7);ctx.fill();
+ const wag=Math.sin(time*9)*.3;ctx.fillStyle=av.tail;ctx.save();ctx.translate(-22,0);ctx.rotate(wag);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-15,-10);ctx.lineTo(-15,10);ctx.closePath();ctx.fill();ctx.restore();
+ const g=ctx.createLinearGradient(0,-14,0,14);g.addColorStop(0,av.top);g.addColorStop(1,av.bottom);ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(0,0,25,14.5,0,0,7);ctx.fill();
  ctx.fillStyle="rgba(255,255,255,.92)";ctx.beginPath();ctx.ellipse(-6,0,4.6,13.4,.12,0,7);ctx.fill();ctx.beginPath();ctx.ellipse(8,0,3.6,12.6,.12,0,7);ctx.fill();
- ctx.fillStyle="#f28c13";ctx.beginPath();ctx.moveTo(-4,-12);ctx.quadraticCurveTo(3,-21,10,-12);ctx.closePath();ctx.fill();
+ ctx.fillStyle=av.tail;ctx.beginPath();ctx.moveTo(-4,-12);ctx.quadraticCurveTo(3,-21,10,-12);ctx.closePath();ctx.fill();
+ if(av.crown){ctx.fillStyle="#ffd23f";ctx.strokeStyle="#b97e04";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-2,-22);ctx.lineTo(0,-28);ctx.lineTo(4,-23);ctx.lineTo(7,-28);ctx.lineTo(10,-22);ctx.closePath();ctx.fill();ctx.stroke();}
+ if(profile.currentAvatar==="rainbow"){ctx.fillStyle=`hsl(${Math.floor(time*120)%360},90%,60%)`;ctx.beginPath();ctx.arc(-12,6,3.4,0,7);ctx.fill();}
  // little arm holding the net pole when casting
  if(net.active){ctx.strokeStyle="#8a5a2b";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(14,4);ctx.lineTo(38,8);ctx.stroke();}
  ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(13,-4,5.2,0,7);ctx.fill();ctx.fillStyle="#20303c";ctx.beginPath();ctx.arc(14.6,-4,2.6,0,7);ctx.fill();
@@ -292,7 +364,7 @@ let lastTs=0;function frame(ts){const dt=Math.min(.05,(ts-lastTs)/1000||.016);la
 /* ================= ROUND / HUD ================= */
 function updateHud(){hudScore.textContent=game.score;hudCaught.textContent=game.caught;hudCombo.textContent="×"+game.bestCombo;}
 function startRound(){game.score=0;game.caught=0;game.bestCombo=0;game.timeLeft=GAME_LEN;game.visited=new Set(["beach"]);bots.forEach((b,i)=>b.score=[120,80,40][i]);fish.x=400;fish.y=450;net.active=false;net.caught=[];seedWorld();state.playing=true;castBtn.disabled=false;hudTime.classList.remove("low");updateHud();updateLeader();toast("ROAM & CATCH THE HUMANS!","blue");}
-function endGame(){state.playing=false;castBtn.disabled=true;if(net.caught.length)releaseCaught(false);net.active=false;sounds.gameOver();document.getElementById("finalScore").textContent=game.score;document.getElementById("finalCaught").textContent=game.caught;document.getElementById("finalCombo").textContent="×"+game.bestCombo;document.getElementById("finalPlaces").textContent=game.visited.size+" / 4";document.getElementById("overLine").textContent=game.caught===0?"Not a single human?! They are still laughing in all four places.":game.visited.size===4?"World tour complete — you hunted in every place!":"Time's up! You visited "+game.visited.size+" of 4 places.";document.getElementById("overScreen").hidden=false;}
+function endGame(){state.playing=false;castBtn.disabled=true;if(net.caught.length)releaseCaught(false);net.active=false;sounds.gameOver();document.getElementById("finalScore").textContent=game.score;document.getElementById("finalCaught").textContent=game.caught;document.getElementById("finalCombo").textContent="×"+game.bestCombo;document.getElementById("finalPlaces").textContent=game.visited.size+" / 4";document.getElementById("finalSpecial").textContent=profile.specialCaught+" / 20";const doneList=MISSIONS.filter(m=>profile.done.has(m.id)).map(m=>m.title);const nextM=MISSIONS.find(m=>!profile.done.has(m.id));document.getElementById("overMissions").innerHTML="🎯 <b>Missions done: "+profile.done.size+" / 4</b>"+(doneList.length?" — "+doneList.join(", "):"")+(nextM?"<br/>Next: "+nextM.icon+" "+nextM.title+" — "+Math.min(nextM.get(),nextM.target)+" / "+nextM.target+". Mission progress carries into the next round!":"<br/>All missions complete — legend! 🏆");renderMissions();document.getElementById("overLine").textContent=game.caught===0?"Not a single human?! They are still laughing in all four places.":game.visited.size===4?"World tour complete — you hunted in every place!":"Time's up! You visited "+game.visited.size+" of 4 places.";document.getElementById("overScreen").hidden=false;}
 
 /* ================= INPUT ================= */
 const stick=document.getElementById("stick"),knob=document.getElementById("stickKnob");
@@ -305,7 +377,7 @@ canvas.addEventListener("dblclick",e=>{e.preventDefault();castNet();});
 castBtn.addEventListener("pointerdown",e=>{e.preventDefault();ensureCtx();castNet();});
 addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Space"].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==="Space"){ensureCtx();castNet();}});
 addEventListener("keyup",e=>keys[e.code]=false);
-document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});document.addEventListener("gesturestart",e=>e.preventDefault());
+document.addEventListener("touchmove",e=>{if(e.target.closest&&e.target.closest(".overlay,.mission-card"))return;e.preventDefault();},{passive:false});document.addEventListener("gesturestart",e=>e.preventDefault());
 
 /* ================= AUDIO CONTROLS ================= */
 const muteBtn=document.getElementById("muteBtn"),volSlider=document.getElementById("volSlider");
@@ -315,7 +387,14 @@ volSlider.addEventListener("input",()=>{state.volume=volSlider.value/100;if(stat
 function unlockAndStart(){ensureCtx();if("speechSynthesis" in window){try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;speechSynthesis.speak(u);}catch(e){}}state.started=true;document.getElementById("startScreen").hidden=true;document.getElementById("overScreen").hidden=true;startRound();}
 document.getElementById("startBtn").addEventListener("click",unlockAndStart);
 document.getElementById("againBtn").addEventListener("click",unlockAndStart);
-resize();seedWorld();updateHud();updateLeader();requestAnimationFrame(frame);
+const missionPanel=document.getElementById("missionPanel");
+function openMissions(){renderMissions();missionPanel.hidden=false;}
+function closeMissionsFn(){missionPanel.hidden=true;}
+document.getElementById("missionsBtn").addEventListener("click",()=>{ensureCtx();openMissions();});
+document.getElementById("closeMissions").addEventListener("click",closeMissionsFn);
+document.getElementById("overMissionsBtn").addEventListener("click",openMissions);
+missionPanel.addEventListener("click",e=>{if(e.target===missionPanel)closeMissionsFn();});
+resize();seedWorld();updateHud();updateLeader();renderMissions();requestAnimationFrame(frame);
 </script>
 </body>
 </html>

@@ -24,6 +24,17 @@ Or open `index.html` in any browser. Tap **Click to Start** first — browsers b
 - **Android / iPhone:** on-screen joystick to walk, tap **CAST NET**
 - **PC:** WASD / arrow keys to walk, **Space** to cast, or drag with the mouse
 
+## Missions & avatars
+
+Tap the 🎯 **Missions** button to see live progress. Mission progress tracks across rounds within a play session.
+
+- **Golden Hunter** — hunt 20 ★ Special golden humans → unlock the **Golden Fishy** avatar (crown + glow)
+- **Human Hunter** — 50 total catches → unlock **Shark Fishy**
+- **World Explorer** — visit all 4 places → +1,000 pts
+- **Combo King** — catch ×5 in one net → unlock **Rainbow Fishy**
+
+Special humans are gold, labelled ★ SPECIAL, and shown as gold dots on the minimap. Unlocking an avatar auto-equips it with a fanfare; switch avatars any time from the Missions panel or the start screen.
+
 ## Meme sound effects — all generated in code
 
 No audio files. Every sound is synthesized live with the **Web Audio API**, and the silly voice lines use **speechSynthesis**. All sounds live in one `sounds` object in `index.html`, one function per sound:
