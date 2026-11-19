@@ -86,3 +86,12 @@ versions if a file is missing. To use your own meme sounds, replace any file
 in `sounds/` keeping the same name: `boing.mp3`, `airhorn.mp3`,
 `kaching.mp3`, `sad-trombone.mp3`, `record-scratch.mp3`, `evil-laugh.mp3`,
 `mock-laugh.mp3`, `squeak.mp3`, `dolphin.mp3`, `game-over.mp3`, `hurt.mp3`.
+## Mobile layout
+
+On phones the game is **landscape-first and full-screen**: the desktop stats
+header and instructions text are hidden, replaced by small in-game chips
+(score, time, health), compact Missions/mute buttons and smaller,
+semi-transparent leaderboard and map panels. In portrait a "Rotate your
+phone" overlay appears; tapping Start also tries fullscreen + landscape
+lock where the platform allows it (e.g. Android Chrome). Desktop layout is
+unchanged.

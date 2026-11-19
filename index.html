@@ -82,6 +82,61 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 #controls{display:flex;align-items:center;gap:12px}#hint{flex:1;font-size:.8rem;font-weight:700;color:var(--dim);line-height:1.35}#hint b{color:#fff}
 @media(max-width:640px){#ioPanels{width:132px}#minimap{height:74px}.stat{min-width:48px}.stat .value{font-size:1.05rem}#zoneBanner .zname{font-size:.92rem}}
 @media(pointer:coarse){#stick{display:block}}
+/* ===== MOBILE-ONLY: minimal in-canvas chips, rotate prompt, volume row ===== */
+#mobileHud,#mobileActions{display:none}
+#mobileVolRow{display:none}
+#rotateOverlay{display:none}
+@media(pointer:coarse){
+ #app{padding:0;gap:0;max-width:none;width:100vw;height:100vh;height:100dvh}
+ #hud,#controls{display:none!important}
+ #stage{border:none;border-radius:0;box-shadow:none;flex:1}
+ #mobileHud{display:block;position:absolute;top:calc(6px + env(safe-area-inset-top));left:calc(6px + env(safe-area-inset-left));z-index:5;pointer-events:none}
+ #mobileHud .m-chips{display:flex;gap:5px}
+ .m-chip{display:flex;align-items:center;gap:4px;background:rgba(3,25,44,.62);border:1px solid rgba(140,220,255,.22);border-radius:99px;padding:3px 9px 3px 7px;font-family:Fredoka,sans-serif;font-weight:700;font-size:.86rem;line-height:1.15;backdrop-filter:blur(2px)}
+ .m-chip .m-ic{font-size:.78rem}
+ .m-chip.health b{color:#ff8fa3}.m-chip.health.low b{color:#ff5470}
+ .m-chip.time.low b{color:#ff5470}
+ #mobileHud .m-sub{margin-top:4px;margin-left:4px;font-size:.64rem;font-weight:900;color:rgba(255,255,255,.92);text-shadow:0 1px 4px rgba(0,0,0,.7);letter-spacing:.02em}
+ #mobileActions{display:flex;gap:6px;position:absolute;top:calc(6px + env(safe-area-inset-top));right:calc(6px + env(safe-area-inset-right));z-index:6}
+ #mobileActions button{width:38px;height:38px;border-radius:50%;border:1px solid rgba(140,220,255,.3);background:rgba(3,25,44,.62);color:#fff;font-size:1rem;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(2px);padding:0}
+ #mobileActions button:active{transform:scale(.94)}
+ #missionsBtnM{background:linear-gradient(180deg,#ffd23f,var(--accent))!important;border-color:rgba(0,0,0,.15)!important}
+ #muteBtnM svg{width:20px;height:20px}
+ #muteBtnM .icon-muted{display:none}#muteBtnM.is-muted .icon-muted{display:block}#muteBtnM.is-muted .icon-sound{display:none}
+ #povLabel{display:none!important}
+ #ioPanels{width:112px;top:52px;right:6px;gap:5px;opacity:.92}
+ #ioPanels .panel{padding:5px 7px;border-radius:9px;background:rgba(3,25,44,.55)}
+ #ioPanels .panel h3{font-size:.6rem;margin-bottom:3px}
+ #leaderList{font-size:.62rem;line-height:1.35}
+ #minimap{height:52px}
+ #zoneBanner{top:58px;left:6px;padding:4px 8px;border-radius:9px;background:rgba(3,25,44,.55)}
+ #zoneBanner .zname{font-size:.78rem}
+ #zoneBanner .zsub{display:none}
+ #missionTracker{top:92px;left:6px;padding:3px 8px;font-size:.64rem;gap:6px;background:rgba(3,25,44,.6)}
+ #toast{top:40px}
+ #stick{width:102px;height:102px;left:14px;bottom:14px}
+ #stickKnob{width:48px;height:48px}
+ #castBtn2{width:78px;height:78px;right:14px;bottom:16px;font-size:.88rem}
+ #mobileVolRow{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-weight:900;font-size:.86rem;color:var(--dim)}
+ #mobileVolRow input[type=range]{flex:1;width:auto}
+ .overlay{padding:12px 14px;gap:6px}
+ .overlay h1{font-size:clamp(1.5rem,6vw,2.2rem)}
+ .overlay p{font-size:.8rem}
+ .howto{font-size:.76rem;gap:4px}
+ .big-btn{min-height:46px;font-size:1.05rem;padding:.5em 1.3em}
+}
+@media(pointer:coarse) and (orientation:landscape){
+ .overlay h1{font-size:1.55rem}
+ #avatarGridStart{grid-template-columns:repeat(6,1fr)}
+}
+@media(pointer:coarse) and (orientation:portrait){
+ #rotateOverlay{display:flex;position:absolute;inset:0;z-index:60;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:28px;background:radial-gradient(90% 70% at 50% 35%,rgba(10,90,140,.97),rgba(2,24,43,.99))}
+ #rotateOverlay .r-phone{font-size:4.2rem;line-height:1;animation:rotHint 1.8s ease-in-out infinite}
+ #rotateOverlay h2{font-family:Fredoka,sans-serif;font-weight:700;font-size:1.7rem;margin:0;line-height:1.15}
+ #rotateOverlay p{margin:0;color:var(--dim);font-weight:800;font-size:.92rem;max-width:30ch}
+ @keyframes rotHint{0%,25%{transform:rotate(0deg)}60%,100%{transform:rotate(90deg)}}
+}
+@media(pointer:coarse) and (prefers-reduced-motion:reduce){#rotateOverlay .r-phone{animation:none;transform:rotate(90deg)}}
 </style>
 </head>
 <body>
@@ -102,6 +157,8 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 
 <div id="stage">
 <canvas id="game"></canvas>
+<div id="mobileHud" aria-hidden="true"><div class="m-chips"><span class="m-chip"><span class="m-ic">⭐</span><b id="mScore">0</b></span><span class="m-chip time" id="mTimeChip"><span class="m-ic">⏱</span><b id="mTime">90</b></span><span class="m-chip health" id="mHealthChip"><span class="m-ic">❤️</span><b id="mHealth">100</b></span></div><div class="m-sub" id="mSub">Caught 0 · ★ Special 0 / 20</div></div>
+<div id="mobileActions"><button id="missionsBtnM" type="button" aria-label="Missions">🎯</button><button id="muteBtnM" type="button" aria-label="Mute sound" aria-pressed="false"><svg class="icon-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9.4 9.4 0 0 1 0 13"/></svg><svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4V5z" fill="currentColor" stroke="none"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg></button></div>
 <div id="crosshair" aria-hidden="true"><i></i></div>
 <div id="povLabel">🗺️ RPG MODE · Overhead view — camera follows Fishy</div>
 <div id="zoneBanner"><div class="zname" id="zoneName">🏖️ Sunny Beach</div><div class="zsub" id="zoneSub">Swimmers everywhere — easy catches</div></div>
@@ -111,6 +168,7 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 <div class="unlock-banner" id="unlockBanner" hidden></div>
 <h2>🎯 Missions <span>&amp; Avatars</span></h2>
 <p class="sub">Missions carry over between rounds while you play. Finish one to unlock a new Fishy avatar — tap an unlocked avatar to wear it right away. Special humans are the glowing ★ GOLDEN ones — they love the River Delta. Each place has its own hunter mission too!</p>
+<div id="mobileVolRow"><span>🔊 Volume</span><input type="range" id="volSliderM" min="0" max="100" value="80" aria-label="Volume"/></div>
 <div id="missionList"></div>
 <h2 style="font-size:1.15rem;margin-top:14px">Choose your <span>Fishy</span></h2>
 <div class="avatar-grid" id="avatarGrid"></div>
@@ -161,6 +219,7 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 </div>
 </div>
 
+<div id="rotateOverlay" role="alert"><div class="r-phone">📱</div><h2>🔄 Rotate your phone<br/>to play in landscape</h2><p>Fishy Goes Fishing is played sideways — turn your phone and the game fills the whole screen.</p></div>
 <footer id="controls"><div id="hint"><b>Classic RPG overhead:</b> the camera follows Fishy from above as he roams all 8 places — walk him up to humans and line them up in the gold aim ring. <b>🎣 Hook fishermen chase you — stay out of their red range circle or their hook takes −20 health!</b> 12 missions, 11 avatars — hunt ★ Special golden humans (best in the River)! <b>PC:</b> WASD / arrows move · Space cast &nbsp;•&nbsp; <b>Phone:</b> joystick or drag to walk + CAST NET</div></footer>
 </div>
 
@@ -328,7 +387,7 @@ const SKIN=["#f2c79b","#e0ac7e","#c68642","#8d5524","#ffdbac"],HAIR=["#2b2118","
 const KIND=["Swimmer","Sunbather","Angler","Camper","Pool partier","Picnicker"];
 
 function resize(){const r=stage.getBoundingClientRect();const dpr=Math.min(devicePixelRatio||1,2);W=Math.max(280,r.width);H=Math.max(300,r.height);canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
-addEventListener("resize",resize);addEventListener("orientationchange",()=>setTimeout(resize,60));
+addEventListener("resize",resize);addEventListener("orientationchange",()=>{setTimeout(resize,60);setTimeout(resize,320);});if(window.visualViewport)visualViewport.addEventListener("resize",resize);
 
 function spawnHuman(zone,forceSpecial){zone=zone||pick(ZONES);const golden=forceSpecial?true:(zone.id==="river"?Math.random()<.35:Math.random()<.16);humans.push({x:clamp(zone.x+rand(70,zone.w-70),40,WORLD_W-40),y:clamp(zone.y+rand(80,zone.h-80),50,WORLD_H-40),zone:zone.id,kind:pick(zone.kinds||KIND),dir:Math.random()<.5?1:-1,speed:rand(22,52),skin:pick(SKIN),hair:pick(HAIR),suit:pick(SUIT),golden,state:"wander",wiggle:rand(0,9),danceT:0,runT:0,baseSpeed:0,caughtAt:0,tx:0,ty:0,retarget:0});const _nh=humans[humans.length-1];_nh.baseSpeed=_nh.speed;const h=humans[humans.length-1];h.tx=h.x;h.ty=h.y;}
 function spawnCrab(){const z=pick(ZONES);crabs.push({x:z.x+rand(60,z.w-60),y:z.y+rand(60,z.h-60),dir:1,speed:rand(18,34),snap:rand(0,9),pinchedAt:-9,tx:0,ty:0,retarget:0});}
@@ -371,7 +430,7 @@ function releaseCaught(snapped){net.caught.forEach(h=>startEscapeDance(h,snapped
 function update(dt){time+=dt;popups.forEach(p=>{p.t+=dt;p.y-=30*dt;});popups=popups.filter(p=>p.t<1.1);sayBubbles.forEach(b=>b.t+=dt);sayBubbles=sayBubbles.filter(b=>b.t<1.6);if(game.invuln>0)game.invuln-=dt;if(game.hurtFlash>0)game.hurtFlash-=dt;if(!state.playing)return;
  if(!missionPanel.hidden)return; // paused while the missions panel is open
  game.timeLeft-=dt;if(game.timeLeft<=0){game.timeLeft=0;endGame();return;}
- const shown=Math.ceil(game.timeLeft);if(hudTime.textContent!=String(shown)){hudTime.textContent=shown;hudTime.classList.toggle("low",shown<=10);}
+ const shown=Math.ceil(game.timeLeft);if(hudTime.textContent!=String(shown)){hudTime.textContent=shown;hudTime.classList.toggle("low",shown<=10);const _mt=document.getElementById("mTime"),_mtc=document.getElementById("mTimeChip");if(_mt)_mt.textContent=shown;if(_mtc)_mtc.classList.toggle("low",shown<=10);}
  // movement input — classic RPG: WASD / arrows / joystick move Fishy in
  // world directions (up/down/left/right); holding + dragging the pointer
  // walks him toward the pointer. No heading, no turning.
@@ -607,7 +666,7 @@ function draw(){ctx.clearRect(0,0,W,H);drawGround();
 let lastTs=0;function frame(ts){const dt=Math.min(.05,(ts-lastTs)/1000||.016);lastTs=ts;update(dt);draw();requestAnimationFrame(frame);}
 
 /* ================= ROUND / HUD ================= */
-function updateHud(){hudScore.textContent=game.score;hudCaught.textContent=game.caught;hudCombo.textContent="×"+game.bestCombo;if(hudHealth){hudHealth.textContent=game.health;hudHealth.classList.toggle("low",game.health<=40);}}
+function updateHud(){hudScore.textContent=game.score;hudCaught.textContent=game.caught;hudCombo.textContent="×"+game.bestCombo;if(hudHealth){hudHealth.textContent=game.health;hudHealth.classList.toggle("low",game.health<=40);}const _ms=document.getElementById("mScore"),_mh=document.getElementById("mHealth"),_msub=document.getElementById("mSub"),_mhc=document.getElementById("mHealthChip");if(_ms)_ms.textContent=game.score;if(_mh)_mh.textContent=game.health;if(_mhc)_mhc.classList.toggle("low",game.health<=40);if(_msub)_msub.textContent="Caught "+game.caught+" · ★ Special "+profile.specialCaught+" / 20";}
 function startRound(){game.score=0;game.caught=0;game.bestCombo=0;game.pinched=false;game.health=100;game.invuln=0;game.hurtFlash=0;game.overReason="";sayBubbles=[];game.timeLeft=GAME_LEN;game.visited=new Set(["beach"]);bots.forEach((b,i)=>b.score=[120,80,40][i]);fish.x=400;fish.y=450;fish.angle=0;fish.faceX=1;fish.faceY=0;fish.lean=0;net.active=false;net.caught=[];seedWorld();spawnAt(610,415,false);spawnAt(730,545,true);spawnAt(665,345,false);spawnAt(880,470,false);state.playing=true;castBtn.disabled=false;hudTime.classList.remove("low");updateHud();updateLeader();toast("ROAM & CATCH THE HUMANS!","blue");}
 function endGame(){state.playing=false;castBtn.disabled=true;if(net.caught.length)releaseCaught(false);net.active=false;profile.bestScore=Math.max(profile.bestScore,game.score);if(!game.pinched)profile.cleanRounds=Math.max(profile.cleanRounds,1);sounds.gameOver();checkMissions();document.getElementById("finalScore").textContent=game.score;document.getElementById("finalCaught").textContent=game.caught;document.getElementById("finalCombo").textContent="×"+game.bestCombo;document.getElementById("finalPlaces").textContent=game.visited.size+" / "+ZONES.length;document.getElementById("finalSpecial").textContent=profile.specialCaught+" / 20";const doneList=MISSIONS.filter(m=>profile.done.has(m.id)).map(m=>m.title);const nextM=MISSIONS.find(m=>!profile.done.has(m.id));document.getElementById("overMissions").innerHTML="🎯 <b>Missions done: "+profile.done.size+" / "+MISSIONS.length+"</b>"+(doneList.length?" — "+doneList.join(", "):"")+(nextM?"<br/>Next: "+nextM.icon+" "+nextM.title+" — "+Math.min(nextM.get(),nextM.target)+" / "+nextM.target+". Mission progress carries into the next round!":"<br/>All missions complete — legend! 🏆");renderMissions();document.getElementById("overLine").textContent=game.overReason==="hooked"?"🎣 HOOKED OUT! The fishermen drained Fishy's health to zero — the hunter became the hunted!":game.caught===0?"Not a single human?! They are still laughing in all eight places.":game.visited.size===ZONES.length?"World tour complete — you hunted in every place!":"Time's up! You visited "+game.visited.size+" of "+ZONES.length+" places.";document.getElementById("overScreen").hidden=false;}
 
@@ -628,16 +687,20 @@ document.addEventListener("touchmove",e=>{if(e.target.closest&&e.target.closest(
 
 /* ================= AUDIO CONTROLS ================= */
 const muteBtn=document.getElementById("muteBtn"),volSlider=document.getElementById("volSlider");
-function applyVolume(){if(master)master.gain.value=state.muted?0:state.volume;muteBtn.classList.toggle("is-muted",state.muted);muteBtn.setAttribute("aria-pressed",String(state.muted));}
+const muteBtnM=document.getElementById("muteBtnM"),volSliderM=document.getElementById("volSliderM");
+function applyVolume(){if(master)master.gain.value=state.muted?0:state.volume;muteBtn.classList.toggle("is-muted",state.muted);muteBtn.setAttribute("aria-pressed",String(state.muted));if(muteBtnM){muteBtnM.classList.toggle("is-muted",state.muted);muteBtnM.setAttribute("aria-pressed",String(state.muted));}const _v=String(Math.round(state.volume*100));if(volSlider.value!==_v)volSlider.value=_v;if(volSliderM&&volSliderM.value!==_v)volSliderM.value=_v;}
 muteBtn.addEventListener("click",()=>{state.muted=!state.muted;applyVolume();});
+if(muteBtnM)muteBtnM.addEventListener("click",()=>{ensureCtx();state.muted=!state.muted;applyVolume();});
 volSlider.addEventListener("input",()=>{state.volume=volSlider.value/100;if(state.volume>0)state.muted=false;applyVolume();});
-function unlockAndStart(){ensureCtx();Object.keys(_realAudio).forEach(k=>{const e=_realAudio[k];if(e&&!e.ready&&!e.failed){try{e.audio.load();}catch(_){}}});state.started=true;document.getElementById("startScreen").hidden=true;document.getElementById("overScreen").hidden=true;startRound();}
+if(volSliderM)volSliderM.addEventListener("input",()=>{state.volume=volSliderM.value/100;if(state.volume>0)state.muted=false;applyVolume();});
+function unlockAndStart(){ensureCtx();try{if(matchMedia("(pointer:coarse)").matches){const fs=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(fs&&fs.catch)fs.catch(()=>{});if(screen.orientation&&screen.orientation.lock){const lp=screen.orientation.lock("landscape");if(lp&&lp.catch)lp.catch(()=>{});}}}catch(_){}Object.keys(_realAudio).forEach(k=>{const e=_realAudio[k];if(e&&!e.ready&&!e.failed){try{e.audio.load();}catch(_){}}});state.started=true;document.getElementById("startScreen").hidden=true;document.getElementById("overScreen").hidden=true;startRound();}
 document.getElementById("startBtn").addEventListener("click",unlockAndStart);
 document.getElementById("againBtn").addEventListener("click",unlockAndStart);
 const missionPanel=document.getElementById("missionPanel");
 function openMissions(){renderMissions();missionPanel.hidden=false;}
 function closeMissionsFn(){missionPanel.hidden=true;}
 document.getElementById("missionsBtn").addEventListener("click",()=>{ensureCtx();openMissions();});
+const _mbM=document.getElementById("missionsBtnM");if(_mbM)_mbM.addEventListener("click",()=>{ensureCtx();openMissions();});
 document.getElementById("closeMissions").addEventListener("click",closeMissionsFn);
 document.getElementById("overMissionsBtn").addEventListener("click",openMissions);
 missionPanel.addEventListener("click",e=>{if(e.target===missionPanel)closeMissionsFn();});
