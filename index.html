@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <meta name="color-scheme" content="dark"/>
 <link rel="icon" href="data:,"/>
-<title>Fishy Goes Fishing — 3D Open World + Missions</title>
+<title>Fishy Goes Fishing — RPG Open World + Missions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
 <style>
@@ -101,7 +101,7 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 <div id="stage">
 <canvas id="game"></canvas>
 <div id="crosshair" aria-hidden="true"><i></i></div>
-<div id="povLabel">🎮 NORMAL 3D · Third-person — whole Fishy on screen</div>
+<div id="povLabel">🗺️ RPG MODE · Overhead view — camera follows Fishy</div>
 <div id="zoneBanner"><div class="zname" id="zoneName">🏖️ Sunny Beach</div><div class="zsub" id="zoneSub">Swimmers everywhere — easy catches</div></div>
 <div id="missionTracker"><span><span class="star">★ SPECIAL</span> <span id="trackerSpecial">0 / 20</span></span><span id="trackerNext">→ Golden Fishy</span></div>
 <div id="missionPanel" hidden>
@@ -125,11 +125,11 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 
 <div class="overlay" id="startScreen">
 <h1>Fishy Goes <span class="hl">Fishing</span></h1>
-<p><strong style="color:#fff">Now in NORMAL 3D MODE!</strong> A proper third-person view like a console adventure game: the camera rides behind Fishy in the foreground — you see ALL of him the whole time (fish body, avatar outfit, shorts, human legs) — looking across a rich, sunlit 3D world of trees, grass, rocks, huts and gates, with humans waiting in the distance. He throws his net forward into the scene.</p>
+<p><strong style="color:#fff">Now in classic RPG MODE!</strong> A top-down open world, just like before: the overhead camera follows Fishy as he roams — you see ALL of him at normal size in the world (fish body, avatar outfit, shorts, human legs) — exploring trees, grass, rocks, huts and gates across 8 places, netting the humans he walks up to.</p>
 <div class="howto">
-<span><b>Look / turn</b> — drag on the screen / mouse, or <kbd>←</kbd><kbd>→</kbd> arrow keys — the camera swings behind Fishy</span>
-<span><b>Walk / run</b> — <kbd>W</kbd> forward, <kbd>S</kbd> back, <kbd>A</kbd>/<kbd>D</kbd> step sideways · Phone: left joystick walks, drag right side to look</span>
-<span><b>Cast net</b> — <kbd>Space</kbd>, double-tap, or the big CAST NET button — line a human up in the gold aim ring ahead of Fishy and get close first!</span>
+<span><b>Move</b> — <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrow keys walk Fishy up / left / down / right · Phone: left joystick · or hold &amp; drag on the world and Fishy walks toward your finger</span>
+<span><b>Camera</b> — the overhead RPG camera stays centred on Fishy and follows him everywhere; the white box on the world map shows what you can see</span>
+<span><b>Cast net</b> — <kbd>Space</kbd>, double-tap, or the big CAST NET button — walk up to a human so they are inside the gold aim ring ahead of Fishy, then cast!</span>
 <span><b>Explore 8 places</b> — Sunny Beach · Wooden Pier · Jungle Trail · Waterfall Cove · Splash Pool · River Delta · Coral Lagoon · Fishing Village. Places meet at <b>log gates, bridges and dirt tracks</b> with signposts &amp; torches — walk through an entrance and the place banner fires</span>
 <span><b>Combo</b> — net 3+ humans in one cast for the airhorn bonus</span>
 <span><b>🎯 Missions</b> — <b>12 missions</b> now! Hunt <b>20 ★ Special humans</b> for Golden Fishy, master each place (Beach / Pier / Pool / Delta) for Explorer, Pirate, Party &amp; Jungle Fishy, plus Airhorn King, Dolphin Friend, Crab Dodger, High Scorer and more — <b>11 avatars</b> to unlock. Tap 🎯 Missions anytime</span>
@@ -156,20 +156,21 @@ kbd{font-family:Fredoka,sans-serif;font-size:.82em;background:#0b3d5f;border:1px
 </div>
 </div>
 
-<footer id="controls"><div id="hint"><b>Normal 3D third-person:</b> camera behind Fishy — the whole avatar stays in the foreground while the sunlit world rolls ahead in perspective. Drag to look, walk up to humans and line them up in the gold aim ring. 12 missions, 11 avatars — hunt ★ Special golden humans (best in the River)! <b>PC:</b> WASD walk · ←/→ turn · Space cast &nbsp;•&nbsp; <b>Phone:</b> joystick + drag to look + CAST NET</div></footer>
+<footer id="controls"><div id="hint"><b>Classic RPG overhead:</b> the camera follows Fishy from above as he roams all 8 places — walk him up to humans and line them up in the gold aim ring. 12 missions, 11 avatars — hunt ★ Special golden humans (best in the River)! <b>PC:</b> WASD / arrows move · Space cast &nbsp;•&nbsp; <b>Phone:</b> joystick or drag to walk + CAST NET</div></footer>
 </div>
 
 <script>
 "use strict";
 /* ================================================================
-   FISHY GOES FISHING — POV OPEN WORLD edition.
-   CHARACTER POV (3rd-person, like 3D .io games): the camera rides
-   BEHIND + ABOVE Fishy and looks along his heading, so the WHOLE
-   avatar — body, avatar skin, shorts, animated human legs — is
-   on screen at all times, with the world in perspective ahead.
-   Drag / arrow keys swing the camera; WASD walks (forward is
-   always the way Fishy + camera are facing). World, missions,
-   leaderboard, minimap (radar with view cone) + sounds unchanged.
+   FISHY GOES FISHING — RPG OPEN WORLD edition.
+   CLASSIC RPG OVERHEAD CAMERA (as in v2/v3): a top-down /
+   slightly angled view of the world, camera centred on and
+   following Fishy as he moves. Fishy is drawn in the world at
+   normal character scale (whole avatar: body, skin, shorts,
+   animated human legs), depth-sorted with humans and props.
+   WASD / arrows / joystick / pointer-drag move him in world
+   directions; Space / CAST NET throws the net ahead of him.
+   World, missions, leaderboard, minimap + sounds unchanged.
    All sounds are still synthesized in the ONE `sounds` object
    below with Web Audio + speechSynthesis — no audio files.
    ================================================================ */
@@ -232,7 +233,7 @@ let W=0,H=0,time=0;
 const cam={x:0,y:0};
 const game={score:0,caught:0,bestCombo:0,timeLeft:GAME_LEN,lastVoiceAt:-9,lastTromboneAt:-9,visited:new Set(["beach"]),botT:0,pinched:false};
 const bots=[{name:"SharkySam",score:120},{name:"NetNina",score:80},{name:"SplashKing",score:40}];
-const fish={x:400,y:450,vx:0,vy:0,dir:1,walk:0,moving:false,legSkin:"#f2c79b",angle:0,bob:0,lookDrag:0};
+const fish={x:400,y:450,vx:0,vy:0,dir:1,walk:0,moving:false,legSkin:"#f2c79b",angle:0,bob:0,faceX:1,faceY:0,lean:0};
 /* ================= MISSIONS & AVATARS =================
    Progress lives in `profile` and carries over between rounds
    for the whole play session. Special humans = the glowing
@@ -269,7 +270,7 @@ const MISSIONS=[
 ];
 const net={active:false,t:0,x:0,y:0,r:0,caught:[]};
 let humans=[],crabs=[],dolphins=[],popups=[],bubbles=[];
-const keys={}; let joy={active:false,dx:0,dy:0,id:null}; let look={active:false,id:null,lastX:0};
+const keys={}; let joy={active:false,dx:0,dy:0,id:null}; let dragMove={active:false,id:null,x:0,y:0};
 const SKIN=["#f2c79b","#e0ac7e","#c68642","#8d5524","#ffdbac"],HAIR=["#2b2118","#5a3a1a","#8a8a8a","#c94f30","#2244aa","#e8e3d9"],SUIT=["#ff5470","#ffd23f","#38bdf8","#7bed6a","#ff9f1c","#c77dff"];
 const KIND=["Swimmer","Sunbather","Angler","Camper","Pool partier","Picnicker"];
 
@@ -287,8 +288,8 @@ function popup(x,y,t,c){popups.push({x,y,text:t,color:c||"#fff",t:0});}
 function onCaught(h){if(Math.random()<.5)sounds.boing();else sounds.bonk();if(time-game.lastVoiceAt>.9){sounds.voiceCaught();game.lastVoiceAt=time;}popup(h.x,h.y-30,h.golden?"★ SPECIAL!":"GOTCHA!",h.golden?"#ffd23f":"#fff");}
 function onEscape(h,snapped){if(time-game.lastTromboneAt>2.4){sounds.sadTrombone();game.lastTromboneAt=time;}if(Math.random()<.55)sounds.evilLaugh();if(time-game.lastVoiceAt>.9){sounds.voiceEscape();game.lastVoiceAt=time;}popup(h.x,h.y-32,snapped?"IT SNAPPED!":"WRIGGLED FREE!","#ffb3c1");}
 
-function castNet(){if(!state.playing||net.active)return;net.active=true;net.t=0;net.x=fish.x+Math.cos(fish.angle)*118;net.y=fish.y+Math.sin(fish.angle)*118;net.r=0;net.caught=[];net.throwT=0;}
-function deliverCatch(){const n=net.caught.length;if(!n)return;let pts=0,gold=false,specials=0;net.caught.forEach(h=>{pts+=h.golden?250:100;if(h.golden){gold=true;specials++;}const hz=zoneAt(h.x,h.y);profile.byZone[hz.id]=(profile.byZone[hz.id]||0)+1;});game.caught+=n;game.bestCombo=Math.max(game.bestCombo,n);profile.totalCaught+=n;profile.specialCaught+=specials;profile.bestComboEver=Math.max(profile.bestComboEver,n);if(n>=3){pts+=(n-2)*75;profile.airhorns++;sounds.airhorn();sounds.kaChing();toast("AIRHORN COMBO ×"+n+"!","gold");}else if(gold||n===2){sounds.kaChing();if(gold)toast("★ SPECIAL HUMAN +250! ("+profile.specialCaught+" / 20)","gold");}game.score+=pts;profile.bestScore=Math.max(profile.bestScore,game.score);popup(fish.x+Math.cos(fish.angle)*130,fish.y+Math.sin(fish.angle)*130,"+"+pts,"#ffd23f");humans=humans.filter(h=>h.state!=="caught");net.caught.forEach(()=>spawnHuman());net.caught=[];updateHud();updateLeader();checkMissions();renderMissions();}
+function castNet(){if(!state.playing||net.active)return;net.active=true;net.t=0;net.x=fish.x+fish.faceX*118;net.y=fish.y+fish.faceY*118;net.r=0;net.caught=[];net.throwT=0;}
+function deliverCatch(){const n=net.caught.length;if(!n)return;let pts=0,gold=false,specials=0;net.caught.forEach(h=>{pts+=h.golden?250:100;if(h.golden){gold=true;specials++;}const hz=zoneAt(h.x,h.y);profile.byZone[hz.id]=(profile.byZone[hz.id]||0)+1;});game.caught+=n;game.bestCombo=Math.max(game.bestCombo,n);profile.totalCaught+=n;profile.specialCaught+=specials;profile.bestComboEver=Math.max(profile.bestComboEver,n);if(n>=3){pts+=(n-2)*75;profile.airhorns++;sounds.airhorn();sounds.kaChing();toast("AIRHORN COMBO ×"+n+"!","gold");}else if(gold||n===2){sounds.kaChing();if(gold)toast("★ SPECIAL HUMAN +250! ("+profile.specialCaught+" / 20)","gold");}game.score+=pts;profile.bestScore=Math.max(profile.bestScore,game.score);popup(fish.x+fish.faceX*130,fish.y+fish.faceY*130,"+"+pts,"#ffd23f");humans=humans.filter(h=>h.state!=="caught");net.caught.forEach(()=>spawnHuman());net.caught=[];updateHud();updateLeader();checkMissions();renderMissions();}
 function checkMissions(){MISSIONS.forEach(m=>{if(profile.done.has(m.id))return;if(m.get()>=m.target){profile.done.add(m.id);let msg="";if(m.reward){profile.unlocked.add(m.reward);profile.currentAvatar=m.reward;msg="🎉 MISSION COMPLETE: "+m.title+"! New avatar unlocked: "+AVATARS[m.reward].emoji+" "+AVATARS[m.reward].name+" — now wearing it!";}else{game.score+=1000;msg="🎉 MISSION COMPLETE: "+m.title+"! +1000 bonus points!";updateHud();}sounds.fanfare();sounds.kaChing();const b=document.getElementById("unlockBanner");b.textContent=msg;b.hidden=false;toast(m.title.toUpperCase()+" COMPLETE! 🎉","gold");}});renderMissions();}
 function renderMissions(){const hudS=document.getElementById("hudSpecial");if(hudS)hudS.textContent=profile.specialCaught+" / 20";const tr=document.getElementById("trackerSpecial");if(tr)tr.textContent=profile.specialCaught+" / 20";const tn=document.getElementById("trackerNext");if(tn)tn.textContent=profile.done.has("special20")?"Golden Fishy unlocked! 👑":"→ Golden Fishy";const list=document.getElementById("missionList");if(list){list.innerHTML=MISSIONS.map(m=>{const cur=Math.min(m.get(),m.target),done=profile.done.has(m.id),pct=Math.round(cur/m.target*100);return `<div class="mission-row ${done?"done":""}"><div class="m-top"><span class="m-title">${m.icon} ${m.title} ${done?"✅":""}</span><span class="m-count">${cur} / ${m.target}</span></div><div class="m-desc">${m.desc}</div><div class="bar"><i style="width:${pct}%"></i></div><div class="m-reward ${done?"unlocked":""}">${done?"✅ "+m.rewardText:m.rewardText}</div></div>`;}).join("");}
  const gridHTML=Object.entries(AVATARS).map(([id,a])=>{const un=profile.unlocked.has(id),eq=profile.currentAvatar===id;const lock=MISSIONS.find(m=>m.reward===id);return `<button type="button" class="avatar-card ${eq?"equipped":""} ${un?"":"locked"}" data-avatar="${id}" ${un?"":"disabled"}><div class="a-emoji">${un?a.emoji:"🔒"}</div><div class="a-name">${a.name}</div><div class="a-state">${eq?"★ WEARING":un?"Tap to wear":(lock?lock.title+" mission":"Locked")}</div></button>`;}).join("");
@@ -298,27 +299,25 @@ function releaseCaught(snapped){net.caught.forEach(h=>{h.state="escape";h.danceT
 function update(dt){time+=dt;popups.forEach(p=>{p.t+=dt;p.y-=30*dt;});popups=popups.filter(p=>p.t<1.1);if(!state.playing)return;
  game.timeLeft-=dt;if(game.timeLeft<=0){game.timeLeft=0;endGame();}
  const shown=Math.ceil(game.timeLeft);if(hudTime.textContent!=String(shown)){hudTime.textContent=shown;hudTime.classList.toggle("low",shown<=10);}
- // movement input — POV: forward is always where Fishy is LOOKING (fish.angle)
- // Turn the head: ←/→ arrows, Q/E, dragging, or lookDrag from touch.
- let turn=0;
- if(keys.ArrowLeft||keys.KeyQ)turn-=1;
- if(keys.ArrowRight||keys.KeyE)turn+=1;
- if(fish.lookDrag){turn+=fish.lookDrag*2.6;fish.lookDrag*=.55;if(Math.abs(fish.lookDrag)<.01)fish.lookDrag=0;}
- fish.angle+=turn*2.35*dt;
- let fwdIn=0,strafeIn=0;
- if(keys.KeyW||keys.ArrowUp)fwdIn+=1;
- if(keys.KeyS||keys.ArrowDown)fwdIn-=1;
- if(keys.KeyD)strafeIn+=1;
- if(keys.KeyA)strafeIn-=1;
- if(joy.active&&(Math.abs(joy.dx)>.12||Math.abs(joy.dy)>.12)){strafeIn+=joy.dx;fwdIn+=-joy.dy;}
- fwdIn=clamp(fwdIn,-1,1);strafeIn=clamp(strafeIn,-1,1);
- const fx=Math.cos(fish.angle),fy=Math.sin(fish.angle),rx=-fy,ry=fx; // forward + right vectors
- let mx=fx*fwdIn+rx*strafeIn, my=fy*fwdIn+ry*strafeIn;
- const len=Math.hypot(mx,my); if(len>1){mx/=len;my/=len;}
- const SPEED=275; fish.vx=mx*SPEED; fish.vy=my*SPEED; fish.moving=!!(fwdIn||strafeIn);
+ // movement input — classic RPG: WASD / arrows / joystick move Fishy in
+ // world directions (up/down/left/right); holding + dragging the pointer
+ // walks him toward the pointer. No heading, no turning.
+ let mx=0,my=0;
+ if(keys.KeyA||keys.ArrowLeft)mx-=1;
+ if(keys.KeyD||keys.ArrowRight)mx+=1;
+ if(keys.KeyW||keys.ArrowUp)my-=1;
+ if(keys.KeyS||keys.ArrowDown)my+=1;
+ if(joy.active){mx+=joy.dx;my+=joy.dy;}
+ if(dragMove.active){const tx=cam.x+dragMove.x,ty=cam.y+dragMove.y,ddx=tx-fish.x,ddy=ty-fish.y,dd=Math.hypot(ddx,ddy);if(dd>14){mx+=ddx/dd;my+=ddy/dd;}}
+ const mlen=Math.hypot(mx,my); if(mlen>1){mx/=mlen;my/=mlen;}
+ const SPEED=275; fish.vx=mx*SPEED; fish.vy=my*SPEED; fish.moving=!!(mx||my);
  fish.x=clamp(fish.x+fish.vx*dt,36,WORLD_W-36); fish.y=clamp(fish.y+fish.vy*dt,46,WORLD_H-30);
- fish.dir=fx>=0?1:-1; fish.lean=((fish.lean||0)*.8)+((strafeIn*.16)+(turn*.12))*.2; if(fish.moving){fish.walk+=dt*11; fish.bob=Math.sin(fish.walk*2)*3.2; if(Math.floor(fish.walk)%2===0&&Math.random()<.25)sounds.step();}else fish.bob*=.85;
- cam.x=fish.x; cam.y=fish.y; // camera rides behind Fishy (see DRAWING) — radar centres on him
+ if(mx)fish.dir=mx>0?1:-1;
+ if(fish.moving){const fl=Math.hypot(mx,my)||1;fish.faceX=mx/fl;fish.faceY=my/fl;fish.walk+=dt*11;fish.bob=Math.sin(fish.walk*2)*1.6;if(Math.floor(fish.walk)%2===0&&Math.random()<.25)sounds.step();}else fish.bob*=.85;
+ fish.lean=fish.moving?clamp(mx*.1,-.1,.1):(fish.lean||0)*.8;
+ // RPG overhead camera: centred on Fishy, clamped to the world edges
+ cam.x=W>=WORLD_W?(WORLD_W-W)/2:clamp(fish.x-W/2,0,WORLD_W-W);
+ cam.y=H>=WORLD_H?(WORLD_H-H)/2:clamp(fish.y-H/2,0,WORLD_H-H);
  // zone
  const z=zoneAt(fish.x,fish.y); if(hudZone.textContent!==z.name){hudZone.textContent=z.name;document.getElementById("zoneName").textContent=z.emoji+" "+z.name;document.getElementById("zoneSub").textContent=z.sub;if(!game.visited.has(z.id)){game.visited.add(z.id);toast("NEW PLACE: "+z.name.toUpperCase()+"!","blue");}if(!profile.placesEver.has(z.id)){profile.placesEver.add(z.id);checkMissions();} }
  // bots creep up like an .io lobby
@@ -343,35 +342,26 @@ function update(dt){time+=dt;popups.forEach(p=>{p.t+=dt;p.y-=30*dt;});popups=pop
  drawMini();
 }
 function updateLeader(){const rows=[{name:"You (Fishy)",score:game.score,me:true},...bots].sort((a,b)=>b.score-a.score);document.getElementById("leaderList").innerHTML=rows.map((r,i)=>`<li class="${r.me?"me":""}"><span>${i+1}. ${r.name}</span><b>${r.score}</b></li>`).join("");}
-function drawMini(){const sx=mini.width/WORLD_W,sy=mini.height/WORLD_H;mctx.clearRect(0,0,mini.width,mini.height);ZONES.forEach(z=>{mctx.fillStyle=z.ground;mctx.fillRect(z.x*sx,z.y*sy,z.w*sx,z.h*sy);mctx.fillStyle="rgba(255,255,255,.25)";mctx.fillRect(z.x*sx,z.y*sy+z.h*sy*.55,z.w*sx,z.h*sy*.45);});humans.forEach(h=>{mctx.fillStyle=h.golden?"#ffd23f":"#fff";mctx.fillRect(h.x*sx-2,h.y*sy-2,4,4);}); // POV view cone on the radar
- mctx.fillStyle="rgba(255,183,3,.35)";mctx.beginPath();mctx.moveTo(fish.x*sx,fish.y*sy);mctx.arc(fish.x*sx,fish.y*sy,26,fish.angle-.62,fish.angle+.62);mctx.closePath();mctx.fill();
- mctx.fillStyle="#ffb703";mctx.beginPath();mctx.arc(fish.x*sx,fish.y*sy,6,0,7);mctx.fill();mctx.strokeStyle="#04263f";mctx.beginPath();mctx.moveTo(fish.x*sx,fish.y*sy);mctx.lineTo(fish.x*sx+Math.cos(fish.angle)*11,fish.y*sy+Math.sin(fish.angle)*11);mctx.stroke();}
+function drawMini(){const sx=mini.width/WORLD_W,sy=mini.height/WORLD_H;mctx.clearRect(0,0,mini.width,mini.height);ZONES.forEach(z=>{mctx.fillStyle=z.ground;mctx.fillRect(z.x*sx,z.y*sy,z.w*sx,z.h*sy);mctx.fillStyle="rgba(255,255,255,.25)";mctx.fillRect(z.x*sx,z.y*sy+z.h*sy*.55,z.w*sx,z.h*sy*.45);});humans.forEach(h=>{mctx.fillStyle=h.golden?"#ffd23f":"#fff";mctx.fillRect(h.x*sx-2,h.y*sy-2,4,4);});
+ // camera rectangle — the slice of the world on screen right now
+ mctx.strokeStyle="#fff";mctx.lineWidth=2;mctx.strokeRect(cam.x*sx,cam.y*sy,W*sx,H*sy);
+ mctx.fillStyle="#ffb703";mctx.beginPath();mctx.arc(fish.x*sx,fish.y*sy,5,0,7);mctx.fill();mctx.strokeStyle="#04263f";mctx.lineWidth=1.5;mctx.beginPath();mctx.arc(fish.x*sx,fish.y*sy,5,0,7);mctx.stroke();}
 
-/* ================= DRAWING — CHARACTER POV (3rd-person) =================
-   Camera sits BEHIND + ABOVE Fishy, looking along fish.angle.
-   The world is projected in perspective: far away = small and
-   near the horizon, close = big and low on screen. Fishy himself
-   is drawn LAST, anchored centre-bottom at hero size, so the
-   WHOLE avatar (body, crown/glow, shorts, human legs + shoes) is
-   always fully visible — never clipped, never hidden. */
+/* ================= DRAWING — CLASSIC RPG OVERHEAD =================
+   Top-down / slightly angled overhead view. The camera (cam.x,
+   cam.y = world top-left on screen) is centred on Fishy and the
+   world is drawn translated by it. Everything — props, humans,
+   crabs, dolphins and Fishy himself at normal character scale
+   (whole avatar: body, crown/glow, shorts, human legs + shoes) —
+   is depth-sorted by world Y, like the v2/v3 drawWorld style. */
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
-function camPos(){return{x:fish.x-Math.cos(fish.angle)*175,y:fish.y-Math.sin(fish.angle)*175};}
-function project(wx,wy){const c=camPos(),fx=Math.cos(fish.angle),fy=Math.sin(fish.angle);const dx=wx-c.x,dy=wy-c.y;const fwd=dx*fx+dy*fy;if(fwd<15)return null;const side=dx*(-fy)+dy*fx;const F=Math.max(W,H)*0.72,s=F/fwd,horizon=H*0.36+(fish.bob||0)*0.4;return{x:W/2+side*s,y:horizon+78*s,s:s,fwd:fwd,horizon:horizon,F:F};}
-function drawSkyFloor(){
- const F=Math.max(W,H)*0.72,horizon=H*0.36+(fish.bob||0)*0.4;
- const sky=ctx.createLinearGradient(0,0,0,horizon+2);sky.addColorStop(0,"#3d9be9");sky.addColorStop(.65,"#aee3ff");sky.addColorStop(1,"#ffe9b8");ctx.fillStyle=sky;ctx.fillRect(0,0,W,horizon+2);
- ctx.fillStyle="#fff3a6";ctx.beginPath();ctx.arc(W*0.84,H*0.09,19,0,7);ctx.fill();ctx.fillStyle="rgba(255,220,130,.35)";ctx.beginPath();ctx.arc(W*0.84,H*0.09,34,0,7);ctx.fill();
- ctx.fillStyle="rgba(255,255,255,.85)";[0.12,0.44,0.66].forEach((fxp,i)=>{const cxp=((fxp*W+time*(6+i*3))%(W+180))-90,cyp=H*(0.06+i*0.05);ctx.beginPath();ctx.ellipse(cxp,cyp,30,10,0,0,7);ctx.ellipse(cxp+20,cyp+3,22,8,0,0,7);ctx.fill();});
- // perspective floor: bands of world ground, coloured by the place each patch belongs to
- const c=camPos(),fx=Math.cos(fish.angle),fy=Math.sin(fish.angle),rx=-fy,ry=fx;
- const bands=[];let f0=42;while(f0<1750){bands.push(f0);f0*=1.16;}bands.push(1750);
- for(let bi=bands.length-2;bi>=0;bi--){const fN=bands[bi],fF=bands[bi+1],fM=(fN+fF)/2;const yT=horizon+78*(F/fF),yB=horizon+78*(F/fN);const sM=F/fM;const sideMax=fM*(W*0.62)/F+80,SEG=14;
-  for(let si=0;si<SEG;si++){const sd=-sideMax+(2*sideMax)*(si+0.5)/SEG;const wx=c.x+fx*fM+rx*sd,wy=c.y+fy*fM+ry*sd;let col="#07304d";if(wx>=0&&wx<WORLD_W&&wy>=0&&wy<WORLD_H){const z=zoneAt(wx,wy);col=((wy-z.y)/z.h>0.58)?z.water:z.ground;const bd=Math.min(Math.abs(wx-1300),Math.abs(wx-2600),Math.abs(wx-3900),Math.abs(wy-900));if(bd<58)col="#b08d57";else if(bd<110)col=z.ground;}
-   const x1=W/2+(-sideMax+2*sideMax*si/SEG)*sM,x2=W/2+(-sideMax+2*sideMax*(si+1)/SEG)*sM;ctx.fillStyle=col;ctx.fillRect(x1,yT-1,(x2-x1)+1.5,(yB-yT)+2);}}
- ctx.fillStyle="rgba(255,255,255,.35)";ctx.fillRect(0,horizon-1,W,2);
- const hz=ctx.createLinearGradient(0,horizon-30,0,horizon+90);hz.addColorStop(0,"rgba(255,246,220,0)");hz.addColorStop(.45,"rgba(255,246,220,.28)");hz.addColorStop(1,"rgba(255,246,220,0)");ctx.fillStyle=hz;ctx.fillRect(0,horizon-30,W,120);
- // place-name signs sitting on the horizon for places ahead of you
- ctx.textAlign="center";ZONES.forEach(z=>{const p=project(z.x+z.w/2,z.y+90);if(p&&p.fwd>260&&p.fwd<1600&&p.x>-60&&p.x<W+60){ctx.globalAlpha=clamp(1.6-p.fwd/900,0.15,0.85);ctx.fillStyle="#04263f";ctx.font="700 "+clamp(26*p.s*0.5,10,24)+"px Fredoka,sans-serif";ctx.fillText(z.emoji+" "+z.name.toUpperCase(),p.x,horizon-8);ctx.globalAlpha=1;}});
+function w2s(wx,wy){return{x:wx-cam.x,y:wy-cam.y};}
+function drawGround(){
+ ctx.fillStyle="#07304d";ctx.fillRect(0,0,W,H);
+ ZONES.forEach(z=>{const tl=w2s(z.x,z.y);ctx.fillStyle=z.ground;ctx.fillRect(tl.x,tl.y,z.w,z.h);ctx.fillStyle=z.water;ctx.fillRect(tl.x,tl.y+z.h*0.58,z.w,z.h*0.42);ctx.fillStyle="rgba(255,255,255,.16)";ctx.fillRect(tl.x,tl.y+z.h*0.58,z.w,3);});
+ // dirt transition strips where the places meet
+ ctx.fillStyle="#b08d57";[1300,2600,3900].forEach(x=>{const tl=w2s(x-58,0);ctx.fillRect(tl.x,tl.y,116,WORLD_H);});{const tl=w2s(0,900-58);ctx.fillRect(tl.x,tl.y,WORLD_W,116);}
+ ctx.fillStyle="rgba(90,58,26,.35)";[1300,2600,3900].forEach(x=>{const a=w2s(x-58,0);ctx.fillRect(a.x,a.y,3,WORLD_H);const b=w2s(x+55,0);ctx.fillRect(b.x,b.y,3,WORLD_H);});{const a=w2s(0,900-58);ctx.fillRect(a.x,a.y,WORLD_W,3);const b=w2s(0,900+55);ctx.fillRect(b.x,b.y,WORLD_W,3);}
 }
 const PROPS=[];
 function addProp(t,x,y){PROPS.push({t,x,y});}
@@ -434,9 +424,7 @@ function drawHumanAt(h,p){const s=p.s*0.5;ctx.save();ctx.translate(p.x,p.y);ctx.
  if(h.golden){ctx.fillStyle="#7a5200";ctx.font="800 "+clamp(13*s,9,22)+"px Nunito";ctx.textAlign="center";ctx.fillText("★ SPECIAL",p.x,p.y-60*s);}}
 function drawCrabAt(c,p){const s=p.s*0.5;ctx.save();ctx.translate(p.x,p.y);ctx.scale(s,s);ctx.translate(0,-12);ctx.fillStyle="rgba(0,0,0,.2)";ctx.beginPath();ctx.ellipse(0,12,16,4,0,0,7);ctx.fill();const sn=Math.sin(time*6+c.snap)>.55?.5:.12;ctx.fillStyle="#e8481f";ctx.beginPath();ctx.ellipse(0,0,15,9.5,0,0,7);ctx.fill();ctx.fillStyle="#ff6b4a";ctx.beginPath();ctx.ellipse(0,-2,11,6.5,0,0,7);ctx.fill();ctx.strokeStyle="#b93a1e";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-4,-7);ctx.lineTo(-5,-13);ctx.moveTo(4,-7);ctx.lineTo(5,-13);ctx.stroke();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(-5,-14,2.8,0,7);ctx.arc(5,-14,2.8,0,7);ctx.fill();ctx.fillStyle="#20303c";ctx.beginPath();ctx.arc(-5,-14,1.3,0,7);ctx.arc(5,-14,1.3,0,7);ctx.fill();[-1,1].forEach(sg=>{ctx.save();ctx.translate(sg*16,-3);ctx.rotate(sg*sn);ctx.fillStyle="#e8481f";ctx.beginPath();ctx.ellipse(sg*4,0,6.5,4.4,sg*.5,0,7);ctx.fill();ctx.restore();});ctx.restore();}
 function drawDolphinAt(d,p){const s=p.s*0.5,leap=(Math.sin(time*2.2+d.phase)*0.5+0.5);ctx.save();ctx.translate(p.x,p.y-leap*36*s);ctx.scale(d.dir*s,s);ctx.fillStyle="#8fb8c9";ctx.beginPath();ctx.ellipse(0,0,30,10.5,0,0,7);ctx.fill();ctx.fillStyle="#cfe8f2";ctx.beginPath();ctx.ellipse(3,3.5,24,6,0,0,7);ctx.fill();ctx.fillStyle="#7aa8bc";ctx.beginPath();ctx.moveTo(-4,-8);ctx.quadraticCurveTo(3,-19,10,-8);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(-28,0);ctx.lineTo(-40,-8);ctx.lineTo(-37,0);ctx.lineTo(-40,8);ctx.closePath();ctx.fill();ctx.beginPath();ctx.ellipse(33,1.5,7.5,3.6,0,0,7);ctx.fill();ctx.fillStyle="#20303c";ctx.beginPath();ctx.arc(22,-2.5,1.7,0,7);ctx.fill();ctx.restore();}
-function fishAnchor(){return{x:W/2,feetY:H*0.865+(fish.bob||0),s:clamp(Math.min(W,H)/245,1.25,2.0)};}
-/* FISHY — the WHOLE fish on HUMAN LEGS, always centre-foreground */
-function drawFishyForeground(){const av=AVATARS[profile.currentAvatar]||AVATARS.classic;const a=fishAnchor(),s=a.s;
+function drawFishyWorld(sx,sy){const av=AVATARS[profile.currentAvatar]||AVATARS.classic;const a={x:sx,feetY:sy},s=1.12;
  ctx.fillStyle="rgba(0,0,0,.28)";ctx.beginPath();ctx.ellipse(a.x,a.feetY+4,30*s,7*s,0,0,7);ctx.fill();
  ctx.save();ctx.translate(a.x,a.feetY-30*s);ctx.rotate(fish.lean||0);ctx.scale(s,s);
  if(av.glow){ctx.fillStyle=av.glow;ctx.beginPath();ctx.ellipse(0,2,38,32,0,0,7);ctx.fill();}
@@ -469,38 +457,35 @@ function drawFishyForeground(){const av=AVATARS[profile.currentAvatar]||AVATARS.
  if(!net.active){const hx=a.x+fish.dir*46*s,hy=a.feetY-52*s;ctx.save();ctx.translate(hx,hy);ctx.strokeStyle="#8a5a2b";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-fish.dir*16*s,12*s);ctx.lineTo(0,0);ctx.stroke();ctx.strokeStyle="rgba(255,255,255,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(0,0,15*s,10*s,fish.dir*0.4,0,7);ctx.stroke();ctx.strokeStyle="rgba(255,255,255,.5)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-15*s,0);ctx.lineTo(15*s,0);ctx.moveTo(0,-10*s);ctx.lineTo(0,10*s);ctx.stroke();ctx.restore();}
  // name tag above his head
  const label="YOU · "+av.name.toUpperCase(),topY=a.feetY-66*s;ctx.font="800 "+clamp(12*s,10,16)+"px Nunito";ctx.textAlign="center";const tw=ctx.measureText(label).width+18;ctx.fillStyle="rgba(3,25,44,.78)";rr(a.x-tw/2,topY-26,tw,20,10);ctx.fill();ctx.fillStyle="#ffd23f";ctx.fillText(label,a.x,topY-11);}
-function drawAimNet(){const a=fishAnchor(),handX=a.x+fish.dir*20*a.s,handY=a.feetY-44*a.s;
- if(net.active){const p=project(net.x,net.y);if(p){const r=Math.max(3,net.r*p.s*0.5);ctx.strokeStyle="rgba(138,90,43,.85)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(handX,handY);ctx.lineTo(p.x,p.y-r*0.4);ctx.stroke();ctx.save();ctx.translate(p.x,p.y-r*0.4);ctx.strokeStyle="rgba(255,255,255,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(0,0,r,r*0.42,0,0,7);ctx.stroke();ctx.strokeStyle="rgba(255,255,255,.5)";ctx.lineWidth=1.2;ctx.beginPath();for(let i=-2;i<=2;i++){ctx.moveTo(i*r/3,-r*0.42);ctx.lineTo(i*r/3,r*0.42);}ctx.stroke();ctx.restore();}}
- else if(state.playing){const tx=fish.x+Math.cos(fish.angle)*118,ty=fish.y+Math.sin(fish.angle)*118;const p=project(tx,ty);if(p){const r=(54+Math.sin(time*4)*5)*p.s*0.5;ctx.save();ctx.setLineDash([8,7]);ctx.strokeStyle="#ffd23f";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(p.x,p.y,r,r*0.4,0,0,7);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle="#ffd23f";ctx.beginPath();ctx.arc(p.x,p.y,3.5,0,7);ctx.fill();ctx.restore();}}}
-function drawForegroundFoliage(){ctx.save();ctx.strokeStyle="rgba(23,94,36,.85)";ctx.lineWidth=5;ctx.lineCap="round";for(let sgn=-1;sgn<=1;sgn+=2){for(let i=0;i<4;i++){const bx=sgn<0?i*16:W-i*16,by=sgn<0?-6:-6;ctx.beginPath();ctx.moveTo(sgn<0?0:W,0);ctx.quadraticCurveTo(bx+(sgn<0?26:-26),18+i*7,bx+(sgn<0?58:-58),34+i*11);ctx.stroke();}}
- ctx.strokeStyle="rgba(38,120,44,.9)";ctx.lineWidth=3;const gz=["jungle","river","falls"].includes(zoneAt(fish.x,fish.y).id)?1:.45;ctx.globalAlpha=gz;for(let i=0;i<26;i++){const gx=(i/25)*W+((i*37)%13),gh=14+((i*53)%22);ctx.beginPath();ctx.moveTo(gx,H);ctx.quadraticCurveTo(gx+4,H-gh,gx+((i%3)-1)*7,H-gh-8);ctx.stroke();}ctx.restore();}
-function draw(){ctx.clearRect(0,0,W,H);drawSkyFloor();
+function drawAimNetTop(){const hp=w2s(fish.x+fish.faceX*26,fish.y+fish.faceY*26-14);
+ if(net.active){const p=w2s(net.x,net.y);ctx.strokeStyle="rgba(138,90,43,.85)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(hp.x,hp.y);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.save();ctx.translate(p.x,p.y);ctx.strokeStyle="rgba(255,255,255,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(0,0,Math.max(3,net.r),Math.max(2,net.r*0.62),0,0,7);ctx.stroke();ctx.strokeStyle="rgba(255,255,255,.5)";ctx.lineWidth=1.2;ctx.beginPath();for(let i=-2;i<=2;i++){ctx.moveTo(i*net.r/3,-net.r*0.62);ctx.lineTo(i*net.r/3,net.r*0.62);}ctx.stroke();ctx.restore();}
+ else if(state.playing){const p=w2s(fish.x+fish.faceX*118,fish.y+fish.faceY*118);const r=54+Math.sin(time*4)*5;ctx.save();ctx.setLineDash([8,7]);ctx.strokeStyle="#ffd23f";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(p.x,p.y,r,r*0.62,0,0,7);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle="#ffd23f";ctx.beginPath();ctx.arc(p.x,p.y,3.5,0,7);ctx.fill();ctx.restore();}}
+function draw(){ctx.clearRect(0,0,W,H);drawGround();
  const ents=[];
- PROPS.forEach(pr=>{const p=project(pr.x,pr.y);if(p&&p.x>-70&&p.x<W+70)ents.push({fwd:p.fwd,f:()=>drawProp(pr.t,p)});});
- bubbles.forEach(b=>{const p=project(b.x,b.y);if(p&&p.fwd<700&&p.x>0&&p.x<W)ents.push({fwd:p.fwd,f:()=>{ctx.fillStyle="rgba(255,255,255,.4)";ctx.beginPath();ctx.arc(p.x,p.y,Math.max(1,b.r*p.s*0.3),0,7);ctx.fill();}});});
- humans.forEach(h=>{const p=project(h.x,h.y);if(p&&p.x>-90&&p.x<W+90)ents.push({fwd:p.fwd,f:()=>drawHumanAt(h,p)});});
- crabs.forEach(c=>{const p=project(c.x,c.y);if(p&&p.x>-60&&p.x<W+60)ents.push({fwd:p.fwd,f:()=>drawCrabAt(c,p)});});
- dolphins.forEach(d=>{const p=project(d.x,d.y);if(p&&p.x>-90&&p.x<W+90)ents.push({fwd:p.fwd,f:()=>drawDolphinAt(d,p)});});
- ents.sort((a,b)=>b.fwd-a.fwd);ents.forEach(e=>e.f()); // far first, near last = perspective depth
- drawAimNet();
- drawFishyForeground(); // drawn last: the whole avatar is ALWAYS fully visible
- drawForegroundFoliage(); // palm fronds + grass framing the 3D view, like a jungle clearing
- ctx.textAlign="center";popups.forEach(p=>{const pr=project(p.x,p.y);if(!pr)return;ctx.globalAlpha=clamp(1.2-p.t,0,1);ctx.fillStyle=p.color;ctx.font="700 "+clamp(17*pr.s*0.5,11,24)+"px Fredoka,sans-serif";ctx.fillText(p.text,pr.x,pr.y-64*pr.s*0.5-p.t*22);});ctx.globalAlpha=1;
- const vg=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.75);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,20,40,.28)");ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);}
+ const vis=(wx,wy,m)=>{const p=w2s(wx,wy);return (p.x>-m&&p.x<W+m&&p.y>-m&&p.y<H+m)?p:null;};
+ PROPS.forEach(pr=>{const p=vis(pr.x,pr.y,90);if(p)ents.push({y:pr.y,f:()=>drawProp(pr.t,{x:p.x,y:p.y,s:2})});});
+ bubbles.forEach(b=>{const p=vis(b.x,b.y,10);if(p)ents.push({y:b.y-1,f:()=>{ctx.fillStyle="rgba(255,255,255,.4)";ctx.beginPath();ctx.arc(p.x,p.y,b.r,0,7);ctx.fill();}});});
+ humans.forEach(h=>{const p=vis(h.x,h.y,90);if(p)ents.push({y:h.y,f:()=>drawHumanAt(h,{x:p.x,y:p.y,s:2})});});
+ crabs.forEach(c=>{const p=vis(c.x,c.y,70);if(p)ents.push({y:c.y,f:()=>drawCrabAt(c,{x:p.x,y:p.y,s:2})});});
+ dolphins.forEach(d=>{const p=vis(d.x,d.y,90);if(p)ents.push({y:d.y,f:()=>drawDolphinAt(d,{x:p.x,y:p.y,s:2})});});
+ const fp=w2s(fish.x,fish.y);ents.push({y:fish.y,f:()=>drawFishyWorld(fp.x,fp.y)});
+ ents.sort((a,b)=>a.y-b.y);ents.forEach(e=>e.f()); // RPG depth sort: lower on screen stands in front
+ drawAimNetTop();
+ ctx.textAlign="center";popups.forEach(p=>{const pr=w2s(p.x,p.y);ctx.globalAlpha=clamp(1.2-p.t,0,1);ctx.fillStyle=p.color;ctx.font="700 17px Fredoka,sans-serif";ctx.fillText(p.text,pr.x,pr.y-46-p.t*22);});ctx.globalAlpha=1;}
 
 let lastTs=0;function frame(ts){const dt=Math.min(.05,(ts-lastTs)/1000||.016);lastTs=ts;update(dt);draw();requestAnimationFrame(frame);}
 
 /* ================= ROUND / HUD ================= */
 function updateHud(){hudScore.textContent=game.score;hudCaught.textContent=game.caught;hudCombo.textContent="×"+game.bestCombo;}
-function startRound(){game.score=0;game.caught=0;game.bestCombo=0;game.pinched=false;game.timeLeft=GAME_LEN;game.visited=new Set(["beach"]);bots.forEach((b,i)=>b.score=[120,80,40][i]);fish.x=400;fish.y=450;fish.angle=0;fish.lean=0;net.active=false;net.caught=[];seedWorld();spawnAt(610,415,false);spawnAt(730,545,true);spawnAt(665,345,false);spawnAt(880,470,false);state.playing=true;castBtn.disabled=false;hudTime.classList.remove("low");updateHud();updateLeader();toast("ROAM & CATCH THE HUMANS!","blue");}
+function startRound(){game.score=0;game.caught=0;game.bestCombo=0;game.pinched=false;game.timeLeft=GAME_LEN;game.visited=new Set(["beach"]);bots.forEach((b,i)=>b.score=[120,80,40][i]);fish.x=400;fish.y=450;fish.angle=0;fish.faceX=1;fish.faceY=0;fish.lean=0;net.active=false;net.caught=[];seedWorld();spawnAt(610,415,false);spawnAt(730,545,true);spawnAt(665,345,false);spawnAt(880,470,false);state.playing=true;castBtn.disabled=false;hudTime.classList.remove("low");updateHud();updateLeader();toast("ROAM & CATCH THE HUMANS!","blue");}
 function endGame(){state.playing=false;castBtn.disabled=true;if(net.caught.length)releaseCaught(false);net.active=false;profile.bestScore=Math.max(profile.bestScore,game.score);if(!game.pinched)profile.cleanRounds=Math.max(profile.cleanRounds,1);sounds.gameOver();checkMissions();document.getElementById("finalScore").textContent=game.score;document.getElementById("finalCaught").textContent=game.caught;document.getElementById("finalCombo").textContent="×"+game.bestCombo;document.getElementById("finalPlaces").textContent=game.visited.size+" / "+ZONES.length;document.getElementById("finalSpecial").textContent=profile.specialCaught+" / 20";const doneList=MISSIONS.filter(m=>profile.done.has(m.id)).map(m=>m.title);const nextM=MISSIONS.find(m=>!profile.done.has(m.id));document.getElementById("overMissions").innerHTML="🎯 <b>Missions done: "+profile.done.size+" / "+MISSIONS.length+"</b>"+(doneList.length?" — "+doneList.join(", "):"")+(nextM?"<br/>Next: "+nextM.icon+" "+nextM.title+" — "+Math.min(nextM.get(),nextM.target)+" / "+nextM.target+". Mission progress carries into the next round!":"<br/>All missions complete — legend! 🏆");renderMissions();document.getElementById("overLine").textContent=game.caught===0?"Not a single human?! They are still laughing in all eight places.":game.visited.size===ZONES.length?"World tour complete — you hunted in every place!":"Time's up! You visited "+game.visited.size+" of "+ZONES.length+" places.";document.getElementById("overScreen").hidden=false;}
 
 /* ================= INPUT ================= */
 const stick=document.getElementById("stick"),knob=document.getElementById("stickKnob");
 function setKnob(dx,dy){knob.style.transform=`translate(calc(-50% + ${dx*32}px), calc(-50% + ${dy*32}px))`;}
-canvas.addEventListener("pointerdown",e=>{ensureCtx();const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;if(x<W*.45&&y>H*.5){joy.active=true;joy.id=e.pointerId;joy.ox=x;joy.oy=y;joy.dx=0;joy.dy=0;stick.style.left=(x-59)+"px";stick.style.top=(y-59)+"px";stick.style.bottom="auto";}else{look.active=true;look.id=e.pointerId;look.lastX=x;}});
-canvas.addEventListener("pointermove",e=>{const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;if(joy.active&&e.pointerId===joy.id){joy.dx=clamp((x-joy.ox)/46,-1,1);joy.dy=clamp((y-joy.oy)/46,-1,1);setKnob(joy.dx,joy.dy);}else if(look.active&&e.pointerId===look.id){const dx=x-look.lastX;look.lastX=x;fish.angle+=dx*.0058;}});
-function endPointer(e){if(joy.active&&e.pointerId===joy.id){joy.active=false;joy.dx=joy.dy=0;setKnob(0,0);stick.style.left="18px";stick.style.top="auto";stick.style.bottom="18px";}if(look.active&&e.pointerId===look.id)look.active=false;}
+canvas.addEventListener("pointerdown",e=>{ensureCtx();const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;if(x<W*.45&&y>H*.5){joy.active=true;joy.id=e.pointerId;joy.ox=x;joy.oy=y;joy.dx=0;joy.dy=0;stick.style.left=(x-59)+"px";stick.style.top=(y-59)+"px";stick.style.bottom="auto";}else{dragMove.active=true;dragMove.id=e.pointerId;dragMove.x=x;dragMove.y=y;}});
+canvas.addEventListener("pointermove",e=>{const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;if(joy.active&&e.pointerId===joy.id){joy.dx=clamp((x-joy.ox)/46,-1,1);joy.dy=clamp((y-joy.oy)/46,-1,1);setKnob(joy.dx,joy.dy);}else if(dragMove.active&&e.pointerId===dragMove.id){dragMove.x=x;dragMove.y=y;}});
+function endPointer(e){if(joy.active&&e.pointerId===joy.id){joy.active=false;joy.dx=joy.dy=0;setKnob(0,0);stick.style.left="18px";stick.style.top="auto";stick.style.bottom="18px";}if(dragMove.active&&e.pointerId===dragMove.id)dragMove.active=false;}
 canvas.addEventListener("pointerup",endPointer);canvas.addEventListener("pointercancel",endPointer);
 canvas.addEventListener("dblclick",e=>{e.preventDefault();castNet();});
 castBtn.addEventListener("pointerdown",e=>{e.preventDefault();ensureCtx();castNet();});
